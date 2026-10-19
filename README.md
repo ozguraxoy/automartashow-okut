@@ -10,4 +10,4 @@ Google, Apps Script uygulamalarının içinde canlı kameraya izin vermediği i�
 - İnternet kesilirse okutmalar telefonda bekletilir, bağlantı gelince gönderilir.
 - Sayfa yalnızca uygulamanın kendi adresine (script.google.com/macros/s/…/exec) istek gönderir.
 
-Güncellemek için `okut.html` dosyasını yenisiyle değiştirmeniz yeterlidir.
+Sayfa `gh-pages` dalından yayınlanır; `okut.html` güncellendiğinde değişiklik `main` ve `gh-pages` dallarının ikisine de gönderilir.
