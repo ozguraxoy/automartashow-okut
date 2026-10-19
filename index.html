@@ -2,13 +2,1610 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
 <meta name="robots" content="noindex,nofollow">
-<title>AUTOMARTASHOW · QR Okut</title>
-<script>location.replace('okut.html' + location.search + location.hash);</script>
-<noscript><meta http-equiv="refresh" content="0; url=okut.html"></noscript>
+<meta name="apple-mobile-web-app-title" content="AUTOMARTASHOW">
+<meta name="description" content="AUTOMARTASHOW katılımcı kayıt ve QR eşleşme uygulaması · Martaş Otomotiv">
+<link rel="icon" href="ikon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="ikon-180.png">
+<title>AUTOMARTASHOW</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Montserrat:wght@300;500;600;700;800&display=swap">
+<style>
+/* Yerleşim: tek sütunlu yaka kartı. Yukarıdan aşağı: AUTOMARTASHOW logosu, hesap bilgileri ve kişisel QR,
+   işlemler, fuar bilgileri, markaların toplu logosu, en altta Martaş logosu. Tek açık tema bilinçli bir seçim:
+   sponsor logoları beyaz zemine göre hazırlanır ve taslak da beyaz zeminlidir. */
+:root{
+  --kagit:#ffffff;
+  --murekkep:#151314;
+  --gri:#6d6667;
+  --cizgi:#ddd7d7;
+  --zemin:#f7f4f4;
+  --kirmizi:#e1251b;
+  --kirmizi-koyu:#b81b13;
+  --yesil:#17784b;
+  --yesil-zemin:#eaf5ef;
+  --sari:#9a6a00;
+  --sari-zemin:#fbf3e2;
+  --font:'Montserrat','Segoe UI',Roboto,Arial,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;background:var(--kagit)}
+body{margin:0;background:var(--kagit);color:var(--murekkep);font:500 15px/1.45 var(--font);-webkit-font-smoothing:antialiased}
+body.kilitli{overflow:hidden}
+img{max-width:100%}
+button,input,textarea,select{font:inherit;color:inherit}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--kirmizi);outline-offset:2px}
+
+.sayfa{max-width:440px;margin:0 auto;min-height:calc(100vh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:18px;padding-block:24px 8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.govde{display:flex;flex-direction:column;gap:14px;flex:1}
+.alt-bolum{display:flex;flex-direction:column;gap:16px;margin-top:auto;padding-top:8px}
+
+/* Logo ve şehir yazısı */
+.ust{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.wm{margin:0;font:300 clamp(25px,8.4vw,33px)/1 var(--font);letter-spacing:.005em;white-space:nowrap;padding-bottom:5px;border-bottom:2px solid var(--kirmizi)}
+.wm b{font-weight:800}
+.ust-logo{max-height:72px;width:auto}
+.altyazi{display:flex;align-items:center;justify-content:center;gap:6px;min-height:24px;font:700 14px/1.2 var(--font);letter-spacing:.04em}
+.altyazi input{width:190px;max-width:60vw;padding:6px 8px;border:1.5px solid var(--murekkep);border-radius:3px;font:700 14px var(--font);text-align:center}
+.kalem{display:inline-grid;place-items:center;width:30px;height:30px;padding:0;border:0;background:none;color:var(--gri);cursor:pointer;border-radius:3px}
+.kalem:hover{color:var(--kirmizi);background:var(--zemin)}
+.kalem svg{width:15px;height:15px}
+
+/* Alt kısım: fuar bilgileri, marka logoları, Martaş */
+.fuar{border-top:1.5px solid var(--murekkep);border-bottom:1.5px solid var(--murekkep);padding:12px 4px;text-align:center}
+.fuar small{display:block;font:700 9.5px var(--font);letter-spacing:.14em;color:var(--kirmizi);margin-bottom:4px}
+.fuar p{margin:0;font:700 14px/1.5 var(--font)}
+.fuar p+p{font-weight:500;font-size:13px;color:var(--gri)}
+.logolar{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px 16px}
+.logolar img{height:30px;width:auto;max-width:96px;object-fit:contain}
+.logolar img.bant{height:auto;max-height:170px;max-width:100%;flex-basis:100%;object-fit:contain}
+.logo-bos{border:1.5px dashed var(--cizgi);background:none;padding:14px;color:var(--gri);font:600 12.5px var(--font);cursor:pointer;border-radius:3px;width:100%}
+.logo-bos:hover{border-color:var(--kirmizi);color:var(--kirmizi)}
+.imza{display:flex;justify-content:center;padding:6px 0 10px}
+.imza svg{width:172px;height:auto}
+.imza img{max-height:46px;width:auto}
+
+/* Hesap kartı */
+.rozetler{display:flex;justify-content:center;flex-wrap:wrap;gap:6px}
+.rozet{border:1.5px solid var(--murekkep);padding:7px 12px;font:700 10.5px/1 var(--font);letter-spacing:.09em}
+.rozet.k{background:var(--kirmizi);border-color:var(--kirmizi);color:var(--kagit)}
+.rozet.s{background:var(--murekkep);color:var(--kagit)}
+.hesap{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.hesap h2{margin:2px 0 0;font:800 21px/1.2 var(--font);overflow-wrap:anywhere}
+.hesap p{margin:0;font:600 13.5px/1.4 var(--font);color:var(--gri)}
+.hesap .gsm{font:500 13px var(--mono);color:var(--murekkep)}
+
+/* Düğmeler */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;padding:10px 14px;border:1.5px solid var(--murekkep);border-radius:3px;background:var(--kagit);color:var(--murekkep);font:700 12.5px/1.2 var(--font);letter-spacing:.07em;text-align:center;text-decoration:none;cursor:pointer;transition:background-color .15s,color .15s}
+.btn:hover{background:var(--zemin)}
+.btn:active{transform:translateY(1px)}
+.btn svg{width:18px;height:18px;flex:none}
+.btn-k{background:var(--kirmizi);border-color:var(--kirmizi);color:var(--kagit)}
+.btn-k:hover{background:var(--kirmizi-koyu);border-color:var(--kirmizi-koyu)}
+.btn-s{background:var(--murekkep);color:var(--kagit)}
+.btn-s:hover{background:#2b2829}
+.btn-b{min-height:58px;font-size:13.5px}
+.btn:disabled{opacity:.36;cursor:not-allowed;transform:none}
+.btn-ince{align-self:center;border:0;background:none;padding:10px;color:var(--gri);font:600 13px var(--font);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.btn-ince:hover{color:var(--kirmizi)}
+.btn-tehlike{color:var(--kirmizi);border-color:var(--kirmizi)}
+.ikili{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.ikili .btn{font-size:11.5px;padding:10px 8px}
+.ayrac{display:flex;align-items:center;gap:10px;margin-top:6px;font:700 10.5px var(--font);letter-spacing:.14em;color:var(--gri)}
+.ayrac::before,.ayrac::after{content:"";flex:1;height:1px;background:var(--cizgi)}
+
+/* QR kutusu */
+.qrkutu{display:flex;flex-direction:column;align-items:center;gap:10px;width:min(100%,250px);align-self:center;padding:14px 14px 12px;border:1.5px solid var(--murekkep);background:var(--kagit);cursor:zoom-in;font:inherit;color:inherit}
+.qrkutu svg{width:100%;height:auto;display:block}
+.qrkutu span{font:700 10px/1.35 var(--font);letter-spacing:.08em;text-align:center}
+
+/* Formlar */
+.form{display:flex;flex-direction:column;gap:12px}
+.baslik{margin:0;font:800 15px/1.2 var(--font);letter-spacing:.06em;text-align:center}
+.alan{display:flex;flex-direction:column;gap:5px}
+.alan>span{font:700 10.5px var(--font);letter-spacing:.09em}
+.alan input,.alan textarea,.alan select{width:100%;min-height:48px;padding:11px 12px;border:1.5px solid var(--murekkep);border-radius:3px;background:var(--kagit);font:500 16px var(--font)}
+.alan select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--murekkep) 50%),linear-gradient(135deg,var(--murekkep) 50%,transparent 50%);background-position:calc(100% - 20px) 21px,calc(100% - 14px) 21px;background-size:6px 6px;background-repeat:no-repeat;padding-right:38px}
+.alan textarea{min-height:110px;resize:vertical;line-height:1.5}
+.alan input::placeholder,.alan textarea::placeholder{color:#a19a9b}
+.alan.hatali input{border-color:var(--kirmizi)}
+.ipucu{font:500 12px var(--font);font-style:normal;color:var(--kirmizi)}
+.kategoriler{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1.5px solid var(--murekkep)}
+.kategoriler button{border:0;background:var(--kagit);padding:10px 4px;min-height:58px;font:700 10.5px/1.25 var(--font);letter-spacing:.05em;cursor:pointer}
+.kategoriler button small{display:block;margin-top:2px;font:500 9.5px var(--font);letter-spacing:0;opacity:.75}
+.kategoriler button+button{border-left:1.5px solid var(--murekkep)}
+.kategoriler button[aria-pressed="true"]{background:var(--murekkep);color:var(--kagit)}
+.secenekler{display:flex;flex-direction:column;gap:10px}
+.secenek{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:78px;padding:14px 16px;border:1.5px solid var(--murekkep);border-radius:3px;background:var(--kagit);text-align:left;cursor:pointer;font:inherit;color:inherit}
+.secenek:hover{background:var(--zemin)}
+.secenek b{display:block;font:800 15px/1.2 var(--font);letter-spacing:.05em}
+.secenek small{display:block;margin-top:4px;font:500 13px/1.35 var(--font);color:var(--gri)}
+.secenek i{flex:none;font:700 24px/1 var(--font);font-style:normal;color:var(--kirmizi)}
+.secili-tur{display:flex;align-items:center;gap:10px;border:1.5px solid var(--murekkep);padding:10px 12px}
+.secili-tur span{flex:1;min-width:0;font:700 10.5px var(--font);letter-spacing:.09em;color:var(--gri)}
+.secili-tur span b{display:block;margin-top:2px;font:800 14px var(--font);letter-spacing:.05em;color:var(--murekkep)}
+.yeni-marka{display:flex;gap:8px;align-items:center}
+.yeni-marka input{flex:1;min-width:0;min-height:42px;padding:8px 10px;border:1.5px solid var(--murekkep);border-radius:3px;font:600 14px var(--font)}
+.yeni-marka .btn{width:auto;min-height:42px;flex:none}
+.onay{display:flex;gap:10px;align-items:flex-start;font:500 12.5px/1.45 var(--font);color:var(--murekkep);cursor:pointer}
+.onay input{width:20px;height:20px;margin:1px 0 0;flex:none;accent-color:var(--kirmizi)}
+.hata{min-height:18px;color:var(--kirmizi);font:600 13px/1.4 var(--font);text-align:center}
+.not{margin:0;color:var(--gri);font:500 12.5px/1.5 var(--font);text-align:center}
+.not.sol{text-align:left}
+.not b{color:var(--murekkep)}
+.bant-bilgi{border:1.5px solid var(--murekkep);background:var(--zemin);padding:12px 14px;font:600 13px/1.45 var(--font);text-align:center}
+.bant-bilgi b{color:var(--kirmizi)}
+.bant-kuyruk{background:var(--sari-zemin);border-color:#c99a2e}
+
+/* Listeler */
+.arama{display:flex;align-items:center;gap:10px;border:1.5px solid var(--murekkep);padding:0 12px;min-height:52px;background:var(--kagit)}
+.arama svg{width:22px;height:22px;flex:none}
+.arama input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:600 18px var(--font);padding:12px 0}
+.arama input::placeholder{color:var(--murekkep);font-weight:600;letter-spacing:.03em}
+.suzgec{display:flex;flex-wrap:wrap;gap:6px}
+.suzgec button{border:1.5px solid var(--cizgi);background:var(--kagit);padding:6px 9px;font:700 10.5px var(--font);letter-spacing:.05em;border-radius:3px;cursor:pointer}
+.suzgec button[aria-pressed="true"]{border-color:var(--murekkep);background:var(--murekkep);color:var(--kagit)}
+.suzgec button em{font-style:normal;opacity:.65;margin-left:3px}
+.liste{border:1.5px solid var(--murekkep);max-height:58vh;overflow-y:auto;overscroll-behavior:contain}
+.liste::-webkit-scrollbar{width:12px}
+.liste::-webkit-scrollbar-thumb{background:var(--murekkep)}
+.liste::-webkit-scrollbar-track{background:var(--kagit);border-left:1px solid var(--cizgi)}
+.satir{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border:0;border-bottom:1px solid var(--cizgi);background:var(--kagit);text-align:left;font:inherit;color:inherit}
+button.satir{cursor:pointer}
+button.satir:hover{background:var(--zemin)}
+.satir:last-child{border-bottom:0}
+.satir-bilgi{flex:1;min-width:0}
+.satir-bilgi b{display:block;font:700 14px/1.3 var(--font);overflow-wrap:anywhere}
+.satir-bilgi small{display:block;color:var(--gri);font:500 11.5px/1.45 var(--font);overflow-wrap:anywhere}
+.satir-ok{flex:none;color:var(--gri);font:700 18px var(--font)}
+.etiket{display:inline-block;padding:1px 5px;margin-right:4px;border:1px solid currentColor;font:700 9px/1.4 var(--font);letter-spacing:.05em;vertical-align:1px;color:var(--murekkep)}
+.etiket.t{color:var(--kirmizi)}
+.etiket.c{color:var(--gri)}
+.etiket.y{background:var(--murekkep);color:var(--kagit);border-color:var(--murekkep)}
+.etiket.s{color:var(--sari)}
+.satir-eylem{display:flex;align-items:center;gap:4px;flex:none}
+.link{border:0;background:none;padding:6px 4px;font:600 13px var(--font);text-decoration:underline;text-underline-offset:3px;cursor:pointer;white-space:nowrap}
+.link:hover{color:var(--kirmizi)}
+.ikon{display:grid;place-items:center;width:36px;height:36px;border:1.5px solid var(--cizgi);background:var(--kagit);border-radius:3px;cursor:pointer;padding:0}
+.ikon:hover{border-color:var(--murekkep)}
+.ikon svg{width:18px;height:18px}
+.bos-durum{padding:24px 14px;text-align:center;color:var(--gri);font:500 13px/1.5 var(--font)}
+
+/* Kişi detayı */
+.detay{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 14px;margin:0;border:1.5px solid var(--murekkep);padding:14px}
+.detay dt{font:700 10px/1.8 var(--font);letter-spacing:.09em;color:var(--gri)}
+.detay dd{margin:0;font:600 14px/1.5 var(--font);overflow-wrap:anywhere}
+
+/* E-tablo sayfası */
+.ust-etiket{margin:0;text-align:center;font:700 10px var(--font);letter-spacing:.12em}
+.tablo-baslik{display:flex;align-items:center;gap:10px;border:1.5px solid var(--murekkep);padding:10px 12px;font:700 19px/1.25 var(--font);overflow-wrap:anywhere}
+.tablo-baslik svg{width:22px;height:22px;flex:none}
+.tablo-baslik small{display:block;font:500 12px var(--font);color:var(--gri)}
+.sekmeler{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);border:1.5px solid var(--murekkep)}
+.sekmeler button{border:0;background:var(--kagit);padding:10px 6px;font:700 10.5px/1.25 var(--font);letter-spacing:.05em;cursor:pointer}
+.sekmeler button+button{border-left:1.5px solid var(--murekkep)}
+.sekmeler button[aria-selected="true"]{background:var(--murekkep);color:var(--kagit)}
+.etablo-kap{overflow-x:auto;border:1.5px solid var(--murekkep);max-height:60vh;overflow-y:auto}
+.etablo{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.etablo th{position:sticky;top:0;background:var(--zemin);text-align:left;padding:9px 8px;font:700 10px/1.2 var(--font);letter-spacing:.07em;border-bottom:1.5px solid var(--murekkep)}
+.etablo th+th,.etablo td+td{border-left:1.5px solid var(--murekkep)}
+.etablo td{padding:8px;border-bottom:1px solid var(--murekkep);vertical-align:top;height:40px;font:600 13px/1.35 var(--font)}
+.etablo tr:last-child td{border-bottom:0}
+.etablo td:first-child{width:1%;white-space:nowrap;font:500 11px/1.6 var(--mono)}
+.etablo td small{display:block;font:500 11.5px/1.35 var(--font);color:var(--gri);overflow-wrap:anywhere}
+.etablo td small i{font-style:normal;color:var(--kirmizi);font-weight:700}
+
+/* Okutma ve sonuç */
+.vizor{position:relative;width:100%;aspect-ratio:1/1;max-width:100%;background:var(--murekkep);border-radius:3px;overflow:hidden}
+.vizor video{width:100%;height:100%;object-fit:cover;display:block}
+.vizor::after{content:"";position:absolute;inset:18%;border:2px solid var(--kagit);box-shadow:0 0 0 999px rgba(21,19,20,.35)}
+.durum{margin:0;min-height:20px;text-align:center;font:600 13.5px/1.45 var(--font)}
+.durum.kirmizi{color:var(--kirmizi)}
+.sonuc{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:14px 8px 6px}
+.isaret{display:grid;place-items:center;width:86px;height:86px;border-radius:50%;border:3px solid currentColor;margin-bottom:6px}
+.isaret svg{width:44px;height:44px}
+.sonuc-TAMAM .isaret{color:var(--yesil);background:var(--yesil-zemin)}
+.sonuc-TEKRAR .isaret,.sonuc-KUYRUK .isaret{color:var(--sari);background:var(--sari-zemin)}
+.sonuc-KENDI .isaret,.sonuc-YOK .isaret,.sonuc-GECERSIZ .isaret{color:var(--kirmizi);background:var(--zemin)}
+.sonuc h2{margin:0;font:800 19px/1.2 var(--font);letter-spacing:.06em}
+.sonuc .hedef-ad{margin:4px 0 0;font:800 24px/1.2 var(--font);overflow-wrap:anywhere}
+.esles-cift{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:2px;font:700 16px var(--font)}
+.esles-cift span{border:1.5px solid var(--murekkep);padding:6px 10px;font:800 12px var(--font);letter-spacing:.06em}
+.esles-cift span.k{background:var(--kirmizi);border-color:var(--kirmizi);color:var(--kagit)}
+
+/* Özet */
+.kpi{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.kpi div{border:1.5px solid var(--murekkep);padding:12px}
+.kpi b{display:block;font:800 26px/1.1 var(--font);font-variant-numeric:tabular-nums}
+.kpi span{font:700 10px var(--font);letter-spacing:.09em;color:var(--gri)}
+.bolum{display:flex;flex-direction:column;gap:10px}
+.bolum h3{margin:0;font:800 11.5px var(--font);letter-spacing:.1em}
+.cubuklar{display:flex;flex-direction:column;gap:9px}
+.cubuk-satir{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;font:600 12.5px var(--font)}
+.cubuk-satir span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cubuk-satir em{font:500 11.5px var(--mono);font-style:normal;color:var(--gri);text-align:right}
+.cubuk-yol{grid-column:1/-1;height:8px;background:var(--zemin)}
+.cubuk-yol i{display:block;height:100%;background:var(--kirmizi)}
+.saat-grafik{width:100%;height:auto;display:block}
+.saat-grafik .c{fill:var(--kirmizi)}
+.saat-grafik .z{fill:var(--zemin)}
+.saat-grafik .e{fill:var(--gri);font:500 9px var(--mono)}
+.saat-grafik .k{stroke:var(--cizgi);stroke-width:1}
+.akis{display:flex;flex-direction:column}
+.akis div{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;padding:8px 0;border-bottom:1px solid var(--cizgi);font:600 12.5px/1.35 var(--font)}
+.akis time{font:500 11px/1.6 var(--mono);color:var(--gri)}
+.akis span{overflow-wrap:anywhere}
+.akis span i{font-style:normal;color:var(--kirmizi);font-weight:700}
+
+/* Ayarlar */
+.kutu{display:flex;flex-direction:column;gap:10px;padding:14px;border:1.5px solid var(--murekkep)}
+.kutu h3{margin:0;font:800 11.5px var(--font);letter-spacing:.1em}
+.anahtar{display:flex;align-items:flex-start;gap:12px;cursor:pointer;font:600 13px/1.45 var(--font)}
+.anahtar input{appearance:none;-webkit-appearance:none;flex:none;width:42px;height:24px;margin:0;border-radius:12px;background:var(--cizgi);position:relative;cursor:pointer;transition:background-color .15s}
+.anahtar input::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--kagit);transition:transform .15s}
+.anahtar input:checked{background:var(--kirmizi)}
+.anahtar input:checked::after{transform:translateX(18px)}
+.anahtar small{display:block;font:500 12px/1.4 var(--font);color:var(--gri)}
+.logo-izgara{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.logo-izgara figure{margin:0;display:flex;flex-direction:column;gap:6px;align-items:stretch;border:1px solid var(--cizgi);padding:8px}
+.logo-izgara img{height:40px;width:100%;object-fit:contain}
+.logo-izgara .bant{grid-column:1/-1}
+.logo-izgara .bant img{height:auto;max-height:90px}
+.logo-izgara button{border:0;background:none;color:var(--kirmizi);font:700 10.5px var(--font);letter-spacing:.06em;cursor:pointer;padding:4px}
+
+/* Tam ekran QR */
+.ov{position:fixed;inset:0;z-index:50;background:var(--kagit);overflow-y:auto;padding:calc(20px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.ov-ic{max-width:460px;min-height:100%;margin:0 auto;display:flex;flex-direction:column;justify-content:center;gap:14px;text-align:center}
+.ov-ic h2{margin:0;font:800 22px/1.2 var(--font);overflow-wrap:anywhere}
+.ov-qr{width:min(100%,56vh,400px);align-self:center;background:var(--kagit);padding:4px}
+.ov-qr svg{width:100%;height:auto;display:block}
+.ov-not{margin:0;font:500 13px/1.55 var(--font);color:var(--gri)}
+.ov-not b{color:var(--murekkep)}
+.ov-onay{display:flex;justify-content:center;gap:8px;align-items:center;font:600 12.5px var(--font);cursor:pointer}
+.ov-onay input{width:18px;height:18px;accent-color:var(--kirmizi)}
+.giris-bilgi{display:inline-grid;grid-template-columns:auto auto;gap:4px 12px;margin:0 auto 6px;padding:10px 16px;border:2px dashed var(--kirmizi);text-align:left;font:600 13px var(--font);color:var(--murekkep)}
+.giris-bilgi b{font:600 15px var(--mono);letter-spacing:.04em}
+
+/* Yükleniyor ve bildirim */
+.yukleniyor{display:flex;flex-direction:column;align-items:center;gap:14px;padding:40px 0;text-align:center}
+.yukleniyor p{margin:0;font:600 13.5px var(--font);color:var(--gri)}
+.serit{width:120px;height:3px;background:var(--zemin);overflow:hidden;position:relative}
+.serit::after{content:"";position:absolute;inset:0;width:40%;background:var(--kirmizi);animation:serit 1s ease-in-out infinite alternate}
+@keyframes serit{from{transform:translateX(-10%)}to{transform:translateX(160%)}}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;max-width:min(92vw,420px);padding:12px 16px;background:var(--murekkep);color:var(--kagit);font:600 13px/1.4 var(--font);border-radius:3px;box-shadow:0 6px 24px rgba(21,19,20,.25);text-align:center}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (min-width:600px){.sayfa{padding-block:40px 12px}}
+</style>
+
 </head>
-<body style="font-family:Arial,sans-serif;padding:24px">
-<p><a href="okut.html">AUTOMARTASHOW QR okutma sayfası</a></p>
+<body>
+<div id="app"></div>
+<div id="ov" class="ov" role="dialog" aria-modal="true" aria-label="QR kod" hidden></div>
+<div id="toast" class="toast" role="status" hidden></div>
+<input type="file" id="foto" accept="image/*" capture="environment" hidden>
+<input type="file" id="logo-dosya" accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif" hidden>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<!--ONIZLEME-->
+<script>
+(function () {
+  'use strict';
+
+  /* ------------------------------------------------------------------ yardımcılar */
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var app = $('#app'), ov = $('#ov'), toastEl = $('#toast'), foto = $('#foto'), logoDosya = $('#logo-dosya');
+  var ONIZLEME = !!window.AMS_ONIZLEME;
+  // Google dışındaki adreste (GitHub) çalışırken sunucunun adresi; Apps Script içinde boş kalır ve google.script.run kullanılır
+  var UZAK = 'https://script.google.com/macros/s/AKfycbzxOrd5LurVGHGyjJSC4oZNtoDEttHUmoZmUHVVjV_TiAyUf5rA-7tfAvRx2fPKPA/exec';
+  try { document.documentElement.lang = 'tr'; } catch (e) { /* yok */ }
+
+  var KAT = { C: 'MARTAŞ ÇALIŞANI', T: 'MARKA TEMSİLCİSİ', M: 'MÜŞTERİ' };
+  var YETKI = { A: 'ANA YÖNETİCİ', Y: 'YÖNETİCİ', K: 'KULLANICI' };
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function iki(n) { return (n < 10 ? '0' : '') + n; }
+  function tarih(t) { if (!t) return ''; var d = new Date(t); return iki(d.getDate()) + '.' + iki(d.getMonth() + 1) + '.' + d.getFullYear() + ' - ' + iki(d.getHours()) + ':' + iki(d.getMinutes()); }
+  function saat(t) { var d = new Date(t); return iki(d.getHours()) + ':' + iki(d.getMinutes()); }
+  function sayi(n) { return Number(n || 0).toLocaleString('tr-TR'); }
+  function katla(s) { return String(s || '').replace(/[İIı]/g, 'i').toLowerCase().replace(/ş/g, 's').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ö/g, 'o').replace(/ç/g, 'c'); }
+  function dosyaAdi(s) { return katla(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').toUpperCase() || 'QR'; }
+  function emailOk(s) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(s || '').trim()); }
+  function gsmCoz(s) {
+    s = String(s || '').trim();
+    var d = s.replace(/\D/g, ''), intl = /^(\+|00)/.test(s);
+    if (intl) { if (s.indexOf('00') === 0) d = d.slice(2); if (d.indexOf('90') === 0) { d = d.slice(2); intl = false; } }
+    else { if (d.length === 12 && d.indexOf('90') === 0) d = d.slice(2); if (d.length === 11 && d.charAt(0) === '0') d = d.slice(1); }
+    if (!intl) return /^5\d{9}$/.test(d) ? '0' + d.slice(0, 3) + ' ' + d.slice(3, 6) + ' ' + d.slice(6, 8) + ' ' + d.slice(8) : null;
+    return d.length >= 8 && d.length <= 15 ? '+' + d : null;
+  }
+  var depo = {
+    al: function (k) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } },
+    koy: function (k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* depolama kapalı */ } }
+  };
+  function toast(m) {
+    toastEl.textContent = m; toastEl.hidden = false;
+    clearTimeout(toast.z); toast.z = setTimeout(function () { toastEl.hidden = true; }, 3400);
+  }
+  function mesgul(btn, acik, metin) {
+    if (!btn) return;
+    if (acik) { btn.dataset.eski = btn.innerHTML; btn.disabled = true; btn.textContent = metin || 'BEKLEYİN…'; }
+    else { if (btn.dataset.eski) btn.innerHTML = btn.dataset.eski; btn.disabled = false; }
+  }
+  function hataYaz(id, e) { var el = $('#' + id); if (el) el.textContent = (e && e.msg) || 'Bir hata oluştu. Tekrar deneyin.'; }
+  function katKisa(k) { return k === KAT.C ? 'ÇALIŞAN' : k === KAT.T ? 'TEMSİLCİ' : k === KAT.M ? 'MÜŞTERİ' : k; }
+  function katSinif(k) { return k === KAT.T ? 't' : k === KAT.C ? 'c' : ''; }
+
+  var IKON = {
+    ara: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="13.5" cy="10.5" r="6.5"/><path d="M8.8 15.2 2.5 21.5"/></svg>',
+    kalem: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg>',
+    qr: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg>',
+    kamera: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+    tamam: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="m4.5 12.5 5 5 10-11"/></svg>',
+    carpi: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+    saat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg>'
+  };
+  var MARTAS = '<svg viewBox="0 0 166 44" role="img" aria-label="MARTAŞ Automotive Aftermarket"><rect x="0" y="2" width="40" height="40" rx="3" fill="#e1251b"/><path d="M9 33V11h5.5l5.5 9 5.5-9H31v22h-5.5V20.5L20 29l-5.5-8.5V33z" fill="#fff"/><text x="48" y="29" font-family="Montserrat,Arial,sans-serif" font-weight="800" font-size="25" letter-spacing=".6" fill="#151314">MARTAŞ</text><text x="49" y="40.5" font-family="Montserrat,Arial,sans-serif" font-weight="600" font-size="5.6" letter-spacing="1.3" fill="#151314">AUTOMOTIVE AFTERMARKET</text></svg>';
+
+  /* ------------------------------------------------------------------ sunucu */
+  function api(fn, arg) {
+    if (UZAK) return uzakApi(fn, arg);
+    return new Promise(function (ok, no) {
+      if (!window.google || !google.script || !google.script.run) return no({ code: 'AG', msg: 'Sunucuya bağlanılamadı.' });
+      google.script.run
+        .withSuccessHandler(function (r) { if (r && r.ok) ok(r); else no(r || { code: 'HATA', msg: 'Beklenmeyen bir yanıt alındı.' }); })
+        .withFailureHandler(function (e) { no({ code: 'AG', msg: 'Bağlantı kurulamadı. İnternetinizi kontrol edip tekrar deneyin.', detay: e && e.message }); })[fn](arg);
+    });
+  }
+  // GitHub adresinde: aynı sunucu işlevleri, Apps Script'in doPost kapısından çağrılır
+  function uzakApi(fn, arg) {
+    return new Promise(function (ok, no) {
+      var iptal = typeof AbortController === 'function' ? new AbortController() : null;
+      var sure = setTimeout(function () { if (iptal) iptal.abort(); }, 60000);
+      var ag = function () { clearTimeout(sure); no({ code: 'AG', msg: 'Bağlantı kurulamadı. İnternetinizi kontrol edip tekrar deneyin.' }); };
+      fetch(UZAK, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: fn, arg: arg === undefined ? null : arg }), redirect: 'follow', cache: 'no-store', credentials: 'omit', signal: iptal ? iptal.signal : undefined })
+        .then(function (y) { if (!y.ok) throw 0; return y.json(); })
+        .then(function (r) {
+          clearTimeout(sure);
+          if (r && r.ok) ok(r); else no(r && r.code ? r : { code: 'HATA', msg: 'Beklenmeyen bir yanıt alındı.' });
+        }, ag);
+    });
+  }
+  function hataIsle(e, hedefId) {
+    if (e && e.code === 'OTURUM') return oturumBitti(e);
+    if (hedefId && $('#' + hedefId)) return hataYaz(hedefId, e);
+    toast((e && e.msg) || 'Bir hata oluştu.');
+  }
+
+  /* ------------------------------------------------------------------ durum */
+  var S = {
+    cfg: { alt: 'İSTANBUL - 2026', fuarBilgi: '', kendiKayit: true, duzenleme: true, kvkk: true, kvkkMetin: '', kvkkLink: '', okutma: '' },
+    logolar: [], logoSurum: '', url: '', exec: '', markalar: [],
+    sess: depo.al('ams3.oturum'), me: depo.al('ams3.ben'),
+    q: '', u: '', kayitModu: false, hedef: null, gorunum: '', v: {}, kayitlar: null, kayitZaman: 0, zamanlayici: null, akis: null, wake: null
+  };
+  var onbellek = depo.al('ams3.onbellek');
+  if (onbellek) { S.cfg = onbellek.cfg || S.cfg; S.logolar = onbellek.logolar || []; S.logoSurum = onbellek.logoSurum || ''; S.url = onbellek.url || ''; S.markalar = onbellek.markalar || []; }
+
+  function yon() { return !!S.me && S.me.yetki !== YETKI.K; }
+  function ana() { return !!S.me && S.me.yetki === YETKI.A; }
+  function onbellegeYaz() { depo.koy('ams3.onbellek', { cfg: S.cfg, logolar: S.logolar, logoSurum: S.logoSurum, url: S.url, markalar: S.markalar }); }
+  function benAyarla(me) { S.me = me; depo.koy('ams3.ben', me); }
+  function oturumAc(r) {
+    S.sess = r.sess; depo.koy('ams3.oturum', r.sess); benAyarla(r.me);
+    S.q = ''; S.u = ''; S.hedef = null; S.kayitlar = null;
+    if (r.okutma) return sonucGoster(r.okutma);
+    git('ana');
+    toast('Hoş geldiniz, ' + r.me.ad + '.' + (r.oncekiKapandi ? ' Hesabınız başka bir cihazda açıktı; o cihazdaki oturum kapatıldı.' : ''));
+  }
+  function yerelCikis() {
+    S.sess = null; S.me = null; S.kayitlar = null;
+    depo.koy('ams3.oturum', null); depo.koy('ams3.ben', null);
+  }
+  // Çıkış sunucuya bildirilir; böylece hesap başka bir cihazdan girişe açılır
+  function cikis(sessiz) {
+    var bitir = function () { yerelCikis(); if (!sessiz) { git('giris'); toast('Çıkış yaptınız.'); } };
+    if (!S.sess) { bitir(); return Promise.resolve(); }
+    return api('cikisYap', { sess: S.sess }).then(bitir).catch(function (e) {
+      if (e && e.code === 'AG') { toast('Çıkış için internet bağlantısı gerekiyor. Bağlantı gelince tekrar deneyin.'); return; }
+      bitir();
+    });
+  }
+  function oturumBitti(e) { yerelCikis(); git('giris'); toast((e && e.msg) || 'Oturumunuz kapanmış. Lütfen tekrar giriş yapın.'); }
+
+  /* ------------------------------------------------------------------ gezinme */
+  var V = {}, B = {}, ACT = {};
+  function git(g, v, gecmisYok) {
+    kameraDur(); clearInterval(S.zamanlayici); S.zamanlayici = null;
+    if (g !== 'kayit' && g !== 'yukle') S.kayitModu = false;
+    S.gorunum = g; S.v = v || {};
+    ciz();
+    try { window.scrollTo(0, 0); } catch (e) { /* yok */ }
+    if (!gecmisYok && ['yukle', 'sonuc'].indexOf(g) < 0) gecmiseEkle(g, S.v);
+  }
+  function ciz() {
+    app.innerHTML = (V[S.gorunum] || V.giris)(S.v);
+    if (B[S.gorunum]) B[S.gorunum](S.v);
+  }
+  function yerindeCiz() { var y = window.scrollY; ciz(); window.scrollTo(0, y); }
+  function gecmiseEkle(g, v) {
+    var st = { g: g, id: v.id || '', tip: v.tip || '' };
+    try {
+      if (UZAK) history.pushState(st, '', location.pathname);
+      else if (window.google && google.script && google.script.history) google.script.history.push(st, {}, '');
+    } catch (e) { /* geçmiş desteklenmiyor */ }
+  }
+  function gecmisDegisti(s) {
+    s = s || {};
+    if (!s.g) return;
+    if (s.g !== 'giris' && s.g !== 'kayit' && !S.me) return git('giris', null, true);
+    git(s.g, { id: s.id, tip: s.tip }, true);
+  }
+  if (UZAK) window.addEventListener('popstate', function (e) { gecmisDegisti(e.state); });
+  else try { google.script.history.setChangeHandler(function (e) { gecmisDegisti(e && e.state); }); } catch (e) { /* önizleme */ }
+
+  app.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-x]');
+    if (!el || !app.contains(el)) return;
+    var f = ACT[el.getAttribute('data-x')];
+    if (f) { e.preventDefault(); f(el, e); }
+  });
+
+  /* ------------------------------------------------------------------ ortak parçalar */
+  function ust() {
+    var ul = S.logolar.filter(function (l) { return l.tur === 'UST'; })[0];
+    var logo = ul ? '<img class="ust-logo" src="' + esc(ul.data) + '" alt="AUTOMARTASHOW">'
+      : '<h1 class="wm" aria-label="AUTOMARTASHOW">AUTO <b>MARTAS</b>HOW</h1>';
+    var duzenle = ana() && S.gorunum === 'ana' ? '<button class="kalem" data-x="altDuzenle" aria-label="Yazıyı düzenle" title="Yazıyı düzenle">' + IKON.kalem + '</button>' : '';
+    return '<header class="ust">' + logo + '<div class="altyazi" id="altyazi"><span>' + esc(S.cfg.alt) + '</span>' + duzenle + '</div></header>';
+  }
+  function fuarBilgi() {
+    var satirlar = String(S.cfg.fuarBilgi || '').split('\n').map(function (s) { return s.trim(); }).filter(Boolean);
+    if (!satirlar.length) return '';
+    return '<section class="fuar" aria-label="Fuar bilgileri"><small>FUAR BİLGİLERİ</small>' + satirlar.map(function (s) { return '<p>' + esc(s) + '</p>'; }).join('') + '</section>';
+  }
+  function markaLogolari() {
+    var l = S.logolar.filter(function (x) { return x.tur === 'SPONSOR' || x.tur === 'BANT'; });
+    if (!l.length) return ana() ? '<button class="logo-bos" data-x="git" data-g="ayarlar">+ Markaların toplu logosunu yükleyin</button>' : '';
+    return '<div class="logolar" aria-label="Katılımcı markalar">' + l.map(function (x) {
+      return '<img src="' + esc(x.data) + '" alt="' + esc(x.ad) + '"' + (x.tur === 'BANT' ? ' class="bant"' : '') + '>';
+    }).join('') + '</div>';
+  }
+  function imza() {
+    var al = S.logolar.filter(function (l) { return l.tur === 'ALT'; })[0];
+    return '<footer class="imza">' + (al ? '<img src="' + esc(al.data) + '" alt="MARTAŞ">' : MARTAS) + '</footer>';
+  }
+  /* tam: fuar bilgileri ve marka logoları da gösterilir (ana sayfa ve giriş) */
+  function sayfa(icerik, tam) {
+    return '<div class="sayfa">' + ust() + '<main class="govde">' + icerik + '</main>' +
+      '<div class="alt-bolum">' + (tam ? fuarBilgi() + markaLogolari() : '') + imza() + '</div></div>';
+  }
+  function rozetler(h) {
+    h = h || S.me;
+    if (!h) return '';
+    return '<div class="rozetler"><span class="rozet' + (h.kat === KAT.T ? ' k' : '') + '">' + esc(h.kat) + (h.kat === KAT.T && h.markaAd ? ' · ' + esc(h.markaAd) : '') + '</span>' +
+      (h.yetki && h.yetki !== YETKI.K ? '<span class="rozet s">' + esc(h.yetki) + '</span>' : '') + '</div>';
+  }
+  function alan(id, etiket, tip, ac, ph, deger, ek) {
+    return '<label class="alan" for="' + id + '" id="' + id + '-k"><span>' + etiket + '</span><input id="' + id + '" name="' + id + '" type="' + tip + '"' +
+      (ac ? ' autocomplete="' + ac + '"' : '') + (tip === 'tel' ? ' inputmode="tel"' : '') + (ph ? ' placeholder="' + esc(ph) + '"' : '') +
+      ' value="' + esc(deger || '') + '"' + (ek || '') + '><em class="ipucu" id="' + id + '-ip"></em></label>';
+  }
+  function hedefBandi() {
+    if (!S.hedef) return '';
+    return '<div class="bant-bilgi"><b>' + esc(S.hedef.ad) + '</b> QR kodunu okuttunuz. Giriş yapın; eşleşme kendiliğinden kaydedilecek.</div>';
+  }
+  function kuyrukBandi() {
+    var n = (depo.al('ams3.kuyruk') || []).length;
+    return n ? '<div class="bant-bilgi bant-kuyruk">' + n + ' okutma bağlantı bekliyor. İnternet gelince otomatik gönderilecek.</div>' : '';
+  }
+  function geri(g, etiket) { return '<button class="btn" data-x="git" data-g="' + (g || 'ana') + '">' + (etiket || 'GERİ') + '</button>'; }
+
+  /* ------------------------------------------------------------------ açılış ve giriş */
+  V.yukle = function (v) {
+    return sayfa('<div class="yukleniyor">' + (v.hata ? '' : '<div class="serit" aria-hidden="true"></div>') + '<p>' + esc(v.metin || 'Yükleniyor…') + '</p>' +
+      (v.hata ? '<button class="btn btn-k" data-x="yenidenDene" style="max-width:240px">TEKRAR DENE</button>' : '') + '</div>');
+  };
+
+  V.giris = function () {
+    var gsm = S.u ? (gsmCoz(S.u) || S.u) : '';
+    return sayfa(hedefBandi() + '<form class="form" id="f-giris" novalidate><h2 class="baslik">GİRİŞ YAP</h2>' +
+      alan('deger', 'GSM NO', 'tel', 'username', '0539 724 52 58', gsm) +
+      alan('sifre', 'ŞİFRE', 'password', 'current-password', '••••', '', ' inputmode="numeric"') +
+      '<button class="btn btn-k btn-b" id="g-gonder" type="submit" disabled>GİRİŞ</button>' +
+      '<div class="hata" id="g-hata" role="alert"></div>' +
+      (S.cfg.kendiKayit ? '<button type="button" class="btn" data-x="git" data-g="kayit">HESABINIZ YOK MU? KAYIT OLUN</button>'
+        : '<p class="not">Hesabınız yoksa fuar alanındaki kayıt masasına başvurun. Kayıttan sonra GSM numaranız ve size verilen şifreyle giriş yapabilirsiniz.</p>') +
+      '<p class="not">Hesabınız aynı anda yalnızca bir telefonda açık kalır. Başka bir telefondan giriş yaparsanız önceki telefondaki oturum kapanır.</p>' +
+      '</form>', true);
+  };
+  B.giris = function () {
+    var f = $('#f-giris'), btn = $('#g-gonder'), d = $('#deger'), s = $('#sifre');
+    function denetle() { btn.disabled = !(d.value.indexOf('@') > 0 || d.value.replace(/\D/g, '').length >= 10) || s.value.trim().length < 4; }
+    f.addEventListener('input', denetle);
+    d.addEventListener('blur', function () { var g = gsmCoz(d.value); if (g) d.value = g; });
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (btn.disabled) return;
+      mesgul(btn, true, 'GİRİŞ YAPILIYOR…'); $('#g-hata').textContent = '';
+      S.girisBekliyor = true;
+      api('girisYap', { deger: d.value, sifre: s.value, q: S.q }).then(function (r) { S.girisBekliyor = false; oturumAc(r); }).catch(function (er) {
+        S.girisBekliyor = false;
+        mesgul(btn, false); hataYaz('g-hata', er);
+        if (er.code === 'SIFRE_HATALI') { s.value = ''; s.focus(); denetle(); }
+      });
+    });
+    denetle();
+    (d.value ? s : d).focus();
+  };
+
+  /* ------------------------------------------------------------------ kayıt formu (yeni kayıt, düzeltme, kendi kaydı) */
+  function kayitFormu(mod, h) {
+    h = h || {};
+    var v = S.v, yonetici = mod !== 'kendi', kat = v.kat || h.kat || (yonetici ? KAT.M : '');
+    if (!kat) return kayitTuruSecimi();
+    var deg = function (id) { return v[id] !== undefined ? v[id] : (h[id] || ''); };
+    var kb = function (k, t, alt) { return '<button type="button" data-x="kat" data-k="' + k + '" aria-pressed="' + (kat === k) + '">' + t + (alt ? '<small>' + alt + '</small>' : '') + '</button>'; };
+    var markaSec = (S.markalar.length ? '<label class="alan" for="marka" id="marka-k"><span>MARKA</span><select id="marka"><option value="">Markanızı seçin</option>' +
+      S.markalar.map(function (m) { return '<option value="' + esc(m.id) + '"' + (deg('marka') === m.id ? ' selected' : '') + '>' + esc(m.ad) + '</option>'; }).join('') +
+      '</select><em class="ipucu" id="marka-ip"></em></label>'
+      : '<div class="bant-bilgi">' + (ana() ? 'Henüz marka eklenmedi. Aşağıdan ya da MARKALAR ekranından ekleyin.' : 'Marka listesi henüz hazır değil. Markaları ana hesap ekler; kayıt masasındaki görevlilere başvurun.') + '</div><select id="marka" hidden><option value=""></option></select>') +
+      (ana() && mod !== 'kendi' ? '<div class="yeni-marka" id="yeni-marka" hidden><input id="yeni-marka-ad" placeholder="Yeni marka adı" aria-label="Yeni marka adı"><button type="button" class="btn" data-x="markaHizli">EKLE</button></div>' +
+        '<button type="button" class="btn-ince" data-x="markaAc" style="align-self:flex-start;padding:0">Marka listede yok mu? Yeni marka ekleyin</button>' : '');
+    var firma = kat === KAT.T ? '' : kat === KAT.C ? '<p class="not sol">Firma, <b>Martaş Otomotiv</b> olarak kaydedilir.</p>'
+      : alan('firma', 'FİRMA ADI', 'text', yonetici ? 'off' : 'organization', 'Bayinin, servisin ya da işletmenin adı', v.firma !== undefined ? v.firma : (h.kat === KAT.M ? h.firma : ''));
+    var kv = mod !== 'duzenle' && S.cfg.kvkk ? '<label class="onay"><input type="checkbox" id="kvkk"' + (v.kvkk ? ' checked' : '') + '><span>' + (yonetici ? '<b>Katılımcıya soruldu:</b> ' : '') + esc(S.cfg.kvkkMetin) +
+      (S.cfg.kvkkLink ? ' <a href="' + esc(S.cfg.kvkkLink) + '" target="_blank" rel="noopener">Aydınlatma metni</a>' : '') + '</span></label>' : '';
+    var bas = mod === 'duzenle' ? 'KAYDI DÜZELT' : mod === 'kendi' ? 'KAYIT FORMU' : 'YENİ KAYIT';
+    var turAd = { 'MARKA TEMSİLCİSİ': 'MARKA TEMSİLCİLERİ', 'MÜŞTERİ': 'MÜŞTERİ · bayi, servis, tamirci', 'MARTAŞ ÇALIŞANI': 'MARTAŞ OTOMOTİV' }[kat];
+    var turSecim = mod === 'kendi'
+      ? '<div class="secili-tur"><span>KAYIT TÜRÜ<b>' + esc(turAd) + '</b></span><button type="button" class="link" data-x="turDegistir">Değiştir</button></div>'
+      : '<div class="alan"><span>KATEGORİ</span><div class="kategoriler" role="group" aria-label="Kategori">' +
+        kb(KAT.T, 'MARKA<br>TEMSİLCİLERİ', 'stant personeli') + kb(KAT.M, 'MÜŞTERİ', 'bayi · servis · tamirci') + kb(KAT.C, 'MARTAŞ<br>OTOMOTİV', 'çalışanlar') + '</div></div>';
+    return '<form class="form" id="f-kayit" novalidate><h2 class="baslik">' + bas + '</h2>' + turSecim +
+      (kat === KAT.T ? markaSec : '') +
+      alan('ad', 'ADI SOYADI', 'text', yonetici ? 'off' : 'name', 'Ahmet Aydın', deg('ad')) +
+      firma +
+      alan('gorev', 'GÖREVİ', 'text', yonetici ? 'off' : 'organization-title', kat === KAT.T ? 'Bölge Satış Sorumlusu' : kat === KAT.C ? 'Satış Temsilcisi' : 'Bayi sahibi, servis müdürü, usta…', deg('gorev')) +
+      alan('gsm', 'GSM NO', 'tel', yonetici ? 'off' : 'tel', '05XX XXX XX XX', deg('gsm')) +
+      alan('email', 'E-MAIL (İSTEĞE BAĞLI)', 'email', yonetici ? 'off' : 'email', 'ad@firma.com', deg('email')) + kv +
+      '<button class="btn btn-k btn-b" id="k-gonder" type="submit" disabled>' + (mod === 'duzenle' ? 'DEĞİŞİKLİKLERİ KAYDET' : mod === 'kendi' ? 'KAYIT OL' : 'KAYDET') + '</button>' +
+      '<div class="hata" id="k-hata" role="alert"></div></form>';
+  }
+  function kayitTuruSecimi() {
+    var sec = function (k, t, a) { return '<button type="button" class="secenek" data-x="kat" data-k="' + k + '"><span><b>' + t + '</b><small>' + a + '</small></span><i aria-hidden="true">›</i></button>'; };
+    return '<div class="form" id="tur-secimi"><h2 class="baslik">KAYIT TÜRÜNÜZÜ SEÇİN</h2><div class="secenekler" role="group" aria-label="Kayıt türü">' +
+      sec(KAT.T, 'MARKA TEMSİLCİLERİ', 'Fuardaki markaların stant personeli') +
+      sec(KAT.M, 'MÜŞTERİ', 'Bayi, servis, tamirci') +
+      sec(KAT.C, 'MARTAŞ OTOMOTİV', 'Martaş çalışanları') + '</div></div>';
+  }
+  function formDegerleri(h) {
+    var d = function (id) { var e = $('#' + id); return e ? e.value : ''; };
+    return { kat: S.v.kat || (h && h.kat) || KAT.M, marka: d('marka'), ad: d('ad'), firma: d('firma'), gorev: d('gorev'), gsm: d('gsm'), email: d('email'), kvkk: $('#kvkk') ? $('#kvkk').checked : true };
+  }
+  function formBagla(gonder, h) {
+    var f = $('#f-kayit'), btn = $('#k-gonder');
+    var kontrol = {
+      marka: function (v) { return v ? '' : 'Markayı seçin.'; },
+      ad: function (v) { return v.trim().length >= 3 ? '' : 'Adı ve soyadı yazın.'; },
+      firma: function (v) { return v.trim().length >= 2 ? '' : 'Firma adını yazın.'; },
+      gorev: function (v) { return v.trim().length >= 2 ? '' : 'Görevini yazın.'; },
+      gsm: function (v) { return gsmCoz(v) ? '' : 'GSM numarasını 05XX XXX XX XX biçiminde yazın.'; },
+      email: function (v) { return !v.trim() || emailOk(v) ? '' : 'E-posta geçersiz. Boş bırakabilir ya da düzeltebilirsiniz.'; }
+    };
+    function denetle() {
+      var gecerli = true;
+      Object.keys(kontrol).forEach(function (k) {
+        var inp = $('#' + k);
+        if (!inp) return;
+        var hata = kontrol[k](inp.value), goster = inp.dataset.dokundu && hata;
+        if (hata) gecerli = false;
+        var ip = $('#' + k + '-ip'); if (ip) ip.textContent = goster ? hata : '';
+        var kk = $('#' + k + '-k'); if (kk) kk.classList.toggle('hatali', !!goster);
+      });
+      if ($('#kvkk') && !$('#kvkk').checked) gecerli = false;
+      btn.disabled = !gecerli;
+      return gecerli;
+    }
+    f.addEventListener('input', function (e) { if (e.target.id && kontrol[e.target.id]) S.v[e.target.id] = e.target.value; denetle(); });
+    f.addEventListener('change', function (e) { if (e.target.id === 'marka') S.v.marka = e.target.value; if (e.target.id === 'kvkk') S.v.kvkk = e.target.checked; denetle(); });
+    f.addEventListener('focusout', function (e) {
+      // Marka listesi için uyarı odaktan çıkınca değil gönderimde gösterilir; yoksa sayfa kayar ve yanındaki bağlantıya dokunmak boşa gider
+      if (!e.target.id || !kontrol[e.target.id] || e.target.id === 'marka') return;
+      e.target.dataset.dokundu = '1';
+      if (e.target.id === 'gsm' && gsmCoz(e.target.value)) { e.target.value = gsmCoz(e.target.value); S.v.gsm = e.target.value; }
+      denetle();
+    });
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!denetle()) return;
+      $('#k-hata').textContent = '';
+      mesgul(btn, true, 'KAYDEDİLİYOR…');
+      gonder(formDegerleri(h), btn).catch(function (er) {
+        mesgul(btn, false);
+        if (er && er.code === 'OTURUM') return oturumBitti(er);
+        hataYaz('k-hata', er);
+      });
+    });
+    denetle();
+    var ilk = $('#ad'); if (ilk && !ilk.value) ilk.focus();
+  }
+  function formuSakla() { ['ad', 'firma', 'gorev', 'gsm', 'email', 'marka'].forEach(function (id) { var e = $('#' + id); if (e) S.v[id] = e.value; }); if ($('#kvkk')) S.v.kvkk = $('#kvkk').checked; }
+
+  V.kayit = function () {
+    if (!S.cfg.kendiKayit) return sayfa('<div class="bant-bilgi">Kayıtlar fuar alanındaki kayıt masasında yapılıyor. Masadaki görevliler kaydınızı hemen oluşturur.</div>' +
+      '<button class="btn" data-x="git" data-g="giris">ZATEN HESABIM VAR, GİRİŞ YAP</button>', true);
+    return sayfa(hedefBandi() + '<p class="not"><b>AUTOMARTASHOW\'a hoş geldiniz.</b> Kayıt türünüzü seçin, bilgilerinizi girip KAYIT OL\'a dokunun; kişisel QR kodunuz hemen hazır olur. Stantlarda bu kodu marka personeline gösterirsiniz.</p>' +
+      kayitFormu('kendi') + '<button class="btn-ince" data-x="git" data-g="giris">Zaten hesabınız var mı? Giriş yapın</button>', true);
+  };
+  B.kayit = function () {
+    if (!$('#f-kayit')) return;
+    formBagla(function (d) {
+      d.q = S.q;
+      return api('kayitOl', d).then(function (r) {
+        var me = r.me, okutma = r.okutma, sifre = r.sifre;
+        S.kayitModu = false;
+        oturumAc({ sess: r.sess, me: me });
+        if (okutma) return sonucGoster(okutma);
+        kendiKayitTamam(me, sifre);
+      }).catch(function (er) {
+        if (er && er.code === 'VAR') {
+          var gsm = $('#gsm') ? $('#gsm').value : '';
+          mesgul($('#k-gonder'), false);
+          $('#k-hata').innerHTML = esc(er.msg) + ' <button type="button" data-x="girisGsm" data-gsm="' + esc(gsm) + '">Giriş yap</button>';
+          return;
+        }
+        throw er;
+      });
+    });
+  };
+  function kendiKayitTamam(h, sifre) {
+    qrGoster(h.ad, qrMetni(h), {
+      etiket: 'KAYDINIZ TAMAMLANDI',
+      not: 'Bu sizin kişisel QR kodunuz; ana sayfanızda da durur. Stantlarda marka personeline gösterin.<br><br>' +
+        '<span class="giris-bilgi"><span>GSM</span><b>' + esc(h.gsm) + '</b><span>Şifre</span><b>' + esc(sifre || '1234') + '</b></span><br>Çıkış yaparsanız bu bilgilerle tekrar girersiniz.'
+    });
+  }
+
+  V.yeniKayit = function () { return sayfa(rozetler() + kayitFormu('yeni') + '<div class="ikili"><button class="btn" data-x="git" data-g="kayitlar">KAYITLAR</button>' + geri('ana', 'ANA SAYFA') + '</div>'); };
+  B.yeniKayit = function () {
+    formBagla(function (d, btn) {
+      return api('hesapEkle', Object.assign({ sess: S.sess }, d)).then(function (r) {
+        mesgul(btn, false);
+        S.kayitlar = null;
+        S.v = { kat: S.v.kat, marka: S.v.kat === KAT.T ? S.v.marka : undefined };
+        ciz();
+        kayitTamam(r.hesap, r.sifre);
+      });
+    });
+  };
+  function kayitTamam(h, sifre) {
+    var girisUrl = kayitUrl() + '?u=' + encodeURIComponent(String(h.gsm).replace(/\s/g, ''));
+    qrGoster(h.ad, qrMetni(h), {
+      etiket: 'KAYIT TAMAMLANDI · ' + h.kat + (h.markaAd ? ' · ' + h.markaAd : ''),
+      not: '<span class="giris-bilgi"><span>GSM</span><b>' + esc(h.gsm) + '</b><span>Şifre</span><b>' + esc(sifre || '1234') + '</b></span><br>Bu kişisel QR kod, katılımcının hesabında da görünür. Uygulamayı kendi telefonunda açması için giriş QR kodunu okutabilir.',
+      ek: '<button class="btn btn-s" data-o="giris">' + IKON.qr + 'GİRİŞ QR KODUNU GÖSTER</button>',
+      girisUrl: girisUrl
+    });
+  }
+
+  /* ------------------------------------------------------------------ şifre değiştirme (yöneticiler) */
+  V.sifre = function () {
+    return sayfa(rozetler() + '<form class="form" id="f-sifre" novalidate><h2 class="baslik">ŞİFREMİ DEĞİŞTİR</h2>' +
+      '<p class="not">Yeni şifreniz yalnızca sizin hesabınız için geçerli olur. Katılımcılar varsayılan şifreyle girmeye devam eder.</p>' +
+      alan('s-eski', 'MEVCUT ŞİFRE', 'password', 'current-password', '', '', ' inputmode="text"') +
+      alan('s-yeni', 'YENİ ŞİFRE (en az 4 karakter)', 'password', 'new-password') +
+      alan('s-tekrar', 'YENİ ŞİFRE (TEKRAR)', 'password', 'new-password') +
+      '<button class="btn btn-k btn-b" id="s-gonder" type="submit" disabled>ŞİFREYİ KAYDET</button><div class="hata" id="s-hata" role="alert"></div></form>' + geri('ana'));
+  };
+  B.sifre = function () {
+    var f = $('#f-sifre'), btn = $('#s-gonder'), e = $('#s-eski'), y = $('#s-yeni'), t = $('#s-tekrar');
+    function denetle() {
+      var ok = e.value.trim().length >= 4 && y.value.trim().length >= 4 && y.value === t.value && y.value !== e.value;
+      $('#s-tekrar-ip').textContent = t.value && y.value !== t.value ? 'Yeni şifreler aynı değil.' : '';
+      btn.disabled = !ok;
+    }
+    f.addEventListener('input', denetle);
+    f.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      if (btn.disabled) return;
+      mesgul(btn, true, 'KAYDEDİLİYOR…');
+      api('sifreDegistir', { sess: S.sess, eski: e.value, yeni: y.value }).then(function (r) {
+        benAyarla(r.me); git('ana'); toast('Şifreniz değiştirildi. Bir sonraki girişte yeni şifrenizi kullanın.');
+      }).catch(function (er) { mesgul(btn, false); hataIsle(er, 's-hata'); });
+    });
+    e.focus();
+  };
+
+  /* ------------------------------------------------------------------ ana sayfa */
+  V.ana = function () {
+    var m = S.me;
+    if (!m) return V.giris();
+    var h = rozetler() + '<div class="hesap"><h2>' + esc(m.ad) + '</h2><p>' + esc([m.gorev, m.firma].filter(Boolean).join(' · ')) + '</p><span class="gsm">' + esc(m.gsm) + '</span></div>' + kuyrukBandi() +
+      '<button class="qrkutu" data-x="benimQr" aria-label="QR kodunuzu tam ekran açın">' + qrSvg(qrMetni(m)) + '<span>KİŞİSEL QR KODUNUZ<br>' +
+      (m.kat === KAT.T ? 'MÜŞTERİ QR KODLARINI OKUTARAK EŞLEŞME KAYDEDİN' : 'STANTTAKİ MARKA PERSONELİNE GÖSTERİN') + '</span></button>' +
+      '<button class="btn btn-k btn-b" data-x="okutAc">' + IKON.kamera + 'QR OKUT</button>' +
+      (m.kat === KAT.T && m.markaAd ? '<button class="btn" data-x="rapor" data-tip="ben" data-s="marka">' + esc(m.markaAd) + ' STAND RAPORU</button>' : '') +
+      '<button class="btn" data-x="rapor" data-tip="ben" data-s="okuttu">EŞLEŞMELERİM</button>';
+    if (yon()) {
+      h += '<div class="ayrac">' + (ana() ? 'ANA HESAP YÖNETİMİ' : 'YÖNETİCİ') + '</div>' +
+        (m.sifreVarsayilan ? '<div class="bant-bilgi bant-kuyruk">Şifreniz hâlâ herkesin kullandığı varsayılan şifre. Hesabınızı korumak için <button class="link" data-x="git" data-g="sifre" style="padding:0">şifrenizi değiştirin</button>.</div>' : '') +
+        '<div class="ikili"><button class="btn btn-s" data-x="git" data-g="yeniKayit">YENİ KAYIT</button><button class="btn" data-x="git" data-g="kayitlar">KAYITLAR</button></div>' +
+        (ana() ? '<div class="ikili"><button class="btn" data-x="git" data-g="eslesmeler">EŞLEŞMELER</button><button class="btn" data-x="git" data-g="markalar">MARKALAR</button></div>' +
+          '<div class="ikili"><button class="btn" data-x="git" data-g="ozet">CANLI ÖZET</button><button class="btn" data-x="git" data-g="yoneticiler">YÖNETİCİLER</button></div>' +
+          '<div class="ikili"><button class="btn btn-s" data-x="kayitQr">' + IKON.qr + 'FUAR KAYIT QR</button><button class="btn" data-x="girisQr">' + IKON.qr + 'GİRİŞ QR</button></div>' +
+          '<div class="ikili"><button class="btn" data-x="git" data-g="ayarlar">AYARLAR VE LOGOLAR</button><button class="btn" data-x="git" data-g="sifre">ŞİFREMİ DEĞİŞTİR</button></div>'
+          : '<div class="ikili"><button class="btn" data-x="git" data-g="markalar">MARKALAR</button><button class="btn" data-x="git" data-g="ozet">KAYIT DURUMU</button></div>' +
+          '<div class="ikili"><button class="btn btn-s" data-x="kayitQr">' + IKON.qr + 'FUAR KAYIT QR</button><button class="btn" data-x="git" data-g="sifre">ŞİFREMİ DEĞİŞTİR</button></div>');
+    }
+    h += '<button class="btn-ince" data-x="cikis">Çıkış yap</button>';
+    return sayfa(h, true);
+  };
+
+  /* ------------------------------------------------------------------ QR okutma */
+  V.okut = function () {
+    var sim = ONIZLEME && window.AMS_ONIZLEME.simSecenek ? window.AMS_ONIZLEME.simSecenek(S.me) : '';
+    var tems = S.me && S.me.kat === KAT.T;
+    return sayfa(rozetler() + '<h2 class="baslik">QR OKUT</h2>' +
+      (tems ? '<p class="not">Okuttuğunuz her kişi <b>' + esc(S.me.markaAd) + '</b> markasıyla eşleşir.</p>' : '') +
+      '<div class="vizor" id="vizor" hidden><video id="video" playsinline muted></video></div>' +
+      '<button class="btn btn-k btn-b" data-x="foto" id="foto-btn">' + IKON.kamera + 'KAMERAYLA FOTOĞRAF ÇEK</button>' +
+      '<p class="durum" id="okut-durum" role="status"></p>' +
+      '<p class="not">QR kodu kadrajın ortasına alıp fotoğraf çekin; kod otomatik okunur.<br><b>Daha hızlısı:</b> Telefonunuzun kendi kamerasıyla QR koda bakın ve açılan bağlantıya dokunun. Eşleşme kendiliğinden kaydedilir.</p>' +
+      (ana() && !ONIZLEME ? '<div class="bant-bilgi">Canlı kamerayla okutma için <button class="link" data-x="git" data-g="ayarlar" style="padding:0">AYARLAR</button> &gt; ADRESLER bölümüne okutma sayfasının adresini girin.</div>' : '') +
+      sim + geri('ana', 'KAPAT'));
+  };
+  B.okut = function () { kameraBaslat(); };
+
+  /* Canlı okutma: Google, Apps Script sayfalarında canlı kamerayı engelliyor. Okutma ayrı bir sayfada (AYARLAR > OKUTMA_SAYFASI)
+     çalışır; oturum bilgisi adresin # kısmıyla gider (sunuculara gönderilmez) ve sayfa okutmaları doğrudan sunucuya kaydeder. */
+  function canliOkutAdresi() {
+    var p = { u: kayitUrl(), x: UZAK || S.exec || '', i: S.sess.id, k: S.sess.key, a: S.me.ad, m: S.me.markaAd || '', t: S.me.kat || '', y: S.cfg.alt || '' };
+    return String(S.cfg.okutma).replace(/#.*$/, '') + '#' + Object.keys(p).map(function (k) { return k + '=' + encodeURIComponent(p[k]); }).join('&');
+  }
+  ACT.okutAc = function () {
+    if (S.cfg.okutma && S.sess && S.me && !ONIZLEME) {
+      var a = document.createElement('a');
+      a.href = canliOkutAdresi(); a.target = '_top';
+      document.body.appendChild(a); a.click(); a.remove();
+      return;
+    }
+    git('okut');
+  };
+
+  function durum(m, kirmizi) { var el = $('#okut-durum'); if (el) { el.textContent = m || ''; el.classList.toggle('kirmizi', !!kirmizi); } }
+  function kameraBaslat() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false }).then(function (st) {
+      if (S.gorunum !== 'okut') { st.getTracks().forEach(function (t) { t.stop(); }); return; }
+      S.akis = st;
+      var vid = $('#video'); vid.srcObject = st;
+      $('#vizor').hidden = false;
+      $('#foto-btn').classList.remove('btn-k');
+      $('#foto-btn').innerHTML = IKON.kamera + 'FOTOĞRAFLA OKUT';
+      durum('QR kodu çerçevenin içine getirin.');
+      return vid.play().then(function () { tara(vid); });
+    }).catch(function () { /* canlı kamera yok: fotoğraf düğmesi kullanılır */ });
+  }
+  function kameraDur() { if (S.akis) { S.akis.getTracks().forEach(function (t) { t.stop(); }); S.akis = null; } }
+  function tara(vid) {
+    var bd = null;
+    try { if ('BarcodeDetector' in window) bd = new window.BarcodeDetector({ formats: ['qr_code'] }); } catch (e) { bd = null; }
+    var c = document.createElement('canvas'), x = c.getContext('2d', { willReadFrequently: true }), mesgulMu = false;
+    function adim() {
+      if (!S.akis || S.gorunum !== 'okut') return;
+      if (mesgulMu || !vid.videoWidth) return setTimeout(adim, 150);
+      mesgulMu = true;
+      var bitti = function (metin) {
+        mesgulMu = false;
+        if (metin) { kameraDur(); okutGonder(metin); } else setTimeout(adim, 140);
+      };
+      if (bd) {
+        bd.detect(vid).then(function (r) { bitti(r && r[0] && r[0].rawValue); }).catch(function () { bd = null; bitti(null); });
+      } else {
+        var s = Math.min(1, 640 / Math.max(vid.videoWidth, vid.videoHeight));
+        c.width = Math.round(vid.videoWidth * s); c.height = Math.round(vid.videoHeight * s);
+        x.drawImage(vid, 0, 0, c.width, c.height);
+        var q = window.jsQR ? jsQR(x.getImageData(0, 0, c.width, c.height).data, c.width, c.height, { inversionAttempts: 'dontInvert' }) : null;
+        bitti(q && q.data);
+      }
+    }
+    adim();
+  }
+  function dosyaCoz(file) {
+    return new Promise(function (ok, no) {
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function () {
+        var dene = function () {
+          var olcu = [1400, 900, 2000, 600];
+          for (var i = 0; i < olcu.length; i++) {
+            var s = Math.min(1, olcu[i] / Math.max(img.naturalWidth, img.naturalHeight));
+            var c = document.createElement('canvas');
+            c.width = Math.max(1, Math.round(img.naturalWidth * s)); c.height = Math.max(1, Math.round(img.naturalHeight * s));
+            var x = c.getContext('2d', { willReadFrequently: true });
+            x.drawImage(img, 0, 0, c.width, c.height);
+            var q = jsQR(x.getImageData(0, 0, c.width, c.height).data, c.width, c.height, { inversionAttempts: 'attemptBoth' });
+            if (q && q.data) { URL.revokeObjectURL(url); return ok(q.data); }
+          }
+          URL.revokeObjectURL(url); no(new Error('QR bulunamadı'));
+        };
+        if ('BarcodeDetector' in window) {
+          try {
+            new window.BarcodeDetector({ formats: ['qr_code'] }).detect(img).then(function (r) {
+              if (r && r[0] && r[0].rawValue) { URL.revokeObjectURL(url); ok(r[0].rawValue); } else dene();
+            }).catch(dene);
+            return;
+          } catch (e) { /* desteklenmiyor */ }
+        }
+        dene();
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); no(new Error('Görsel açılamadı')); };
+      img.src = url;
+    });
+  }
+  foto.addEventListener('change', function () {
+    var f = foto.files && foto.files[0];
+    foto.value = '';
+    if (!f) return;
+    durum('QR kod aranıyor…');
+    dosyaCoz(f).then(okutGonder).catch(function () {
+      durum('Fotoğrafta QR kod bulunamadı. Kodu kadrajın ortasına alıp daha yakından ve net çekin.', true);
+    });
+  });
+  function qrId(metin) {
+    var q = String(metin || '').trim(), m = q.match(/[?&]q=([^&#\s]+)/);
+    if (m) { try { q = decodeURIComponent(m[1]); } catch (e) { q = m[1]; } }
+    else if (q.charAt(0) === '{') { try { var o = JSON.parse(q); q = String(o.i || o.id || ''); } catch (e) { return ''; } }
+    q = q.trim().toUpperCase();
+    return /^[KM][0-9A-Z]{4,20}$/.test(q) ? q : '';
+  }
+  function okutGonder(metin) {
+    var id = qrId(metin);
+    if (!id) {
+      if (/^https?:\/\//.test(String(metin)) && String(metin).indexOf(kayitUrl()) === 0) return durum('Bu, uygulamanın giriş QR kodu. Bir katılımcının kişisel QR kodunu okutun.', true);
+      return durum('Bu QR kodu bir AUTOMARTASHOW kodu değil.', true);
+    }
+    durum('Kaydediliyor…');
+    api('okut', { sess: S.sess, q: id }).then(function (r) { sonucGoster(r.okutma); }).catch(function (e) {
+      if (e.code === 'OTURUM') return oturumBitti(e);
+      if (e.code === 'AG') { kuyrugaEkle(id); return sonucGoster({ durum: 'KUYRUK', mesaj: 'Bağlantı yok. Okutma telefonunuzda saklandı ve internet gelince gönderilecek.' }); }
+      durum(e.msg, true);
+    });
+  }
+  function sonucGoster(o) {
+    S.q = ''; S.hedef = null;
+    if (o && o.durum === 'TAMAM' && navigator.vibrate) { try { navigator.vibrate(60); } catch (e) { /* yok */ } }
+    git('sonuc', o || {});
+  }
+  V.sonuc = function (o) {
+    var bas = { TAMAM: o.marka ? 'EŞLEŞME KAYDEDİLDİ' : 'KAYDEDİLDİ', TEKRAR: 'ZATEN KAYITLI', KENDI: 'KENDİ QR KODUNUZ', YOK: 'KAYIT BULUNAMADI', GECERSIZ: 'GEÇERSİZ QR KOD', KUYRUK: 'SIRAYA ALINDI' }[o.durum] || 'SONUÇ';
+    var ik = o.durum === 'TAMAM' ? IKON.tamam : (o.durum === 'TEKRAR' || o.durum === 'KUYRUK') ? IKON.saat : IKON.carpi;
+    var hd = o.hedef || {};
+    var alt = hd.kat === 'MARKA' ? 'MARKA STANDI' : [hd.gorev, hd.firma].filter(Boolean).join(' · ');
+    var sol = hd.kat === 'MARKA' ? (S.me ? S.me.ad : '') : (S.me && S.me.kat === KAT.T ? hd.ad : (S.me ? S.me.ad : hd.ad));
+    return sayfa(rozetler() + '<div class="sonuc sonuc-' + esc(o.durum) + '"><div class="isaret">' + ik + '</div><h2>' + bas + '</h2>' +
+      (hd.ad ? '<p class="hedef-ad">' + esc(hd.ad) + '</p>' + (alt ? '<p class="not">' + esc(alt) + '</p>' : '') : '') +
+      (o.marka && (o.durum === 'TAMAM' || o.durum === 'TEKRAR') ? '<div class="esles-cift"><span>' + esc(sol) + '</span>⟷<span class="k">' + esc(o.marka) + '</span></div>' : '') +
+      '<p class="not">' + esc(o.mesaj || '') + (o.zaman ? ' · ' + tarih(o.zaman) : '') + '</p></div>' +
+      (S.me ? '<div class="ikili"><button class="btn btn-k" data-x="okutAc">YENİ QR OKUT</button>' + geri('ana', 'ANA SAYFA') + '</div>' : geri('giris', 'GİRİŞ')));
+  };
+  function kuyrugaEkle(id) { var k = depo.al('ams3.kuyruk') || []; k.push({ q: id, t: Date.now() }); depo.koy('ams3.kuyruk', k); }
+  function kuyrukGonder() {
+    var k = depo.al('ams3.kuyruk') || [];
+    if (!k.length || !S.sess || kuyrukGonder.calisiyor) return;
+    kuyrukGonder.calisiyor = true;
+    var kalan = k.slice();
+    (function sira() {
+      if (!kalan.length) { kuyrukGonder.calisiyor = false; depo.koy('ams3.kuyruk', null); toast('Bekleyen okutmalar gönderildi.'); if (S.gorunum === 'ana') ciz(); return; }
+      api('okut', { sess: S.sess, q: kalan[0].q, zaman: kalan[0].t }).then(function () { kalan.shift(); depo.koy('ams3.kuyruk', kalan); sira(); })
+        .catch(function (e) {
+          if (e.code !== 'AG') { kalan.shift(); depo.koy('ams3.kuyruk', kalan); return sira(); }
+          kuyrukGonder.calisiyor = false;
+        });
+    })();
+  }
+  window.addEventListener('online', kuyrukGonder);
+  setInterval(kuyrukGonder, 30000);
+
+  /* ------------------------------------------------------------------ raporlar (e-tablo görünümü) */
+  // tip: ben (kendi eşleşmeleri), kisi (ana yönetici bir kişiyi görüntüler), marka (marka raporu)
+  V.rapor = function (v) {
+    var d = v.veri, tip = v.tip, sekmeler = [], baslik = '', alt = '';
+    var geriHedef = tip === 'ben' ? 'ana' : tip === 'marka' ? 'markalar' : 'kayitlar';
+    if (tip === 'marka') {
+      baslik = d ? d.marka.ad : ''; alt = d ? sayi(d.kisi) + ' kişi · ' + sayi(d.eslesmeler.length) + ' eşleşme' : '';
+      sekmeler = [['marka', 'STANDI ZİYARET EDENLER' + (d ? ' · ' + d.eslesmeler.length : '')]];
+    } else {
+      var h = d ? d.hesap : (tip === 'ben' ? S.me : (S.kayitlar || []).filter(function (x) { return x.id === v.id; })[0]);
+      baslik = h ? h.ad : ''; alt = h ? [h.gorev, h.firma].filter(Boolean).join(' · ') : '';
+      var temsilci = d ? !!d.marka : (tip === 'ben' && S.me && S.me.kat === KAT.T);
+      if (temsilci) sekmeler.push(['marka', (d ? d.marka.marka.ad : S.me.markaAd) + ' STANDI' + (d ? ' · ' + d.marka.eslesmeler.length : '')]);
+      sekmeler.push(['okuttu', (tip === 'ben' ? 'OKUTTUKLARIM' : 'OKUTTUKLARI') + (d ? ' · ' + d.okuttu.length : '')]);
+      sekmeler.push(['okutuldu', (tip === 'ben' ? 'BENİ OKUTANLAR' : 'KENDİSİNİ OKUTANLAR') + (d ? ' · ' + d.okutuldu.length : '')]);
+    }
+    var sekme = v.sekme && sekmeler.some(function (s) { return s[0] === v.sekme; }) ? v.sekme : sekmeler[0][0];
+    v._sekme = sekme;
+    var mr = d && sekme === 'marka' ? (tip === 'marka' ? d : d.marka) : null;
+    var satirlar = !d ? [] : mr ? mr.eslesmeler.map(function (r) { return [r.t, r.ad, [r.firma, r.gorev].filter(Boolean).join(' · '), [r.gsm, r.email].filter(Boolean).join(' · '), 'Okutan: ' + r.personel]; })
+      : d[sekme].map(function (r) { return [r.t, r.ad, [r.kat === KAT.T ? '' : r.firma, r.gorev].filter(Boolean).join(' · '), [r.gsm, r.email].filter(Boolean).join(' · '), r.marka ? 'Marka: ' + r.marka : '']; });
+    var sutun2 = mr ? 'KİŞİ' : sekme === 'okuttu' ? 'OKUTULAN QR BİLGİLERİ' : 'QR KODU OKUTAN';
+    var govde = !d ? '<tr><td></td><td>Yükleniyor…</td></tr>' : satirlar.slice().reverse().map(function (r) {
+      return '<tr><td>' + tarih(r[0]) + '</td><td>' + esc(r[1]) + (r[2] ? '<small>' + esc(r[2]) + '</small>' : '') + (r[3] ? '<small>' + esc(r[3]) + '</small>' : '') + (r[4] ? '<small><i>' + esc(r[4]) + '</i></small>' : '') + '</td></tr>';
+    }).join('');
+    if (d) for (var i = satirlar.length; i < 6; i++) govde += '<tr><td></td><td></td></tr>';
+    var url = d && ana() ? (mr ? mr.sekmeUrl : d.sekmeUrl) : '';
+    return sayfa(rozetler() + '<p class="ust-etiket">E-TABLO SAYFASI</p>' +
+      '<div class="tablo-baslik">' + IKON.ara + '<div>' + esc(baslik) + (alt ? '<small>' + esc(alt) + '</small>' : '') + '</div></div>' +
+      (sekmeler.length > 1 ? '<div class="sekmeler" role="tablist">' + sekmeler.map(function (s) { return '<button role="tab" data-x="sekme" data-s="' + s[0] + '" aria-selected="' + (sekme === s[0]) + '">' + esc(s[1]) + '</button>'; }).join('') + '</div>'
+        : '<p class="ust-etiket" style="color:var(--gri)">' + esc(sekmeler[0][1]) + '</p>') +
+      '<div class="etablo-kap"><table class="etablo"><thead><tr><th>TARİH-SAAT</th><th>' + sutun2 + '</th></tr></thead><tbody>' + govde + '</tbody></table></div>' +
+      (mr && mr.temsilciler.length ? '<p class="not sol">Stant personeli: ' + mr.temsilciler.map(function (t) { return '<b>' + esc(t.ad) + '</b> ' + sayi(t.eslesme); }).join(' · ') + '</p>' : '') +
+      '<div class="ikili"><button class="btn" data-x="raporCsv"' + (d ? '' : ' disabled') + '>CSV İNDİR</button>' +
+      (url ? '<a class="btn" href="' + esc(url) + '" target="_blank" rel="noopener">E-TABLODA AÇ</a>' : geri(geriHedef)) + '</div>' +
+      (url ? geri(geriHedef) : ''));
+  };
+  B.rapor = function (v) {
+    if (v.veri) return;
+    var p = v.tip === 'ben' ? api('raporum', { sess: S.sess }) : v.tip === 'marka' ? api('markaRaporu', { sess: S.sess, id: v.id }) : api('kisiRaporu', { sess: S.sess, id: v.id });
+    p.then(function (r) { if (S.gorunum !== 'rapor' || S.v !== v) return; v.veri = r; ciz(); }).catch(function (e) { hataIsle(e); });
+  };
+
+  /* ------------------------------------------------------------------ kayıtlar (yönetici) */
+  V.kayitlar = function (v) {
+    var f = v.f || 'HEPSI', l = S.kayitlar || [];
+    var aktif = l.filter(function (h) { return h.durum !== 'SİLİNDİ'; });
+    var say = function (fn) { return aktif.filter(fn).length; };
+    var sec = function (k, t, n) { return '<button data-x="suz" data-f="' + k + '" aria-pressed="' + (f === k) + '">' + t + (S.kayitlar ? '<em>' + n + '</em>' : '') + '</button>'; };
+    return sayfa(rozetler() + '<h2 class="baslik">KAYITLAR</h2>' +
+      '<label class="arama">' + IKON.ara + '<input id="ara" type="search" placeholder="ARAMA" autocomplete="off" aria-label="Ad, firma, görev ya da GSM ara" value="' + esc(v.ara || '') + '"></label>' +
+      '<div class="suzgec">' + sec('HEPSI', 'TÜMÜ', aktif.length) + sec(KAT.C, 'ÇALIŞAN', say(function (h) { return h.kat === KAT.C; })) +
+      sec(KAT.T, 'TEMSİLCİ', say(function (h) { return h.kat === KAT.T; })) + sec(KAT.M, 'MÜŞTERİ', say(function (h) { return h.kat === KAT.M; })) +
+      sec('YONETICI', 'YÖNETİCİ', say(function (h) { return h.yetki !== YETKI.K; })) +
+      (ana() ? sec('SILINDI', 'SİLİNEN', l.length - aktif.length) : '') + '</div>' +
+      '<div class="liste" id="liste"><div class="bos-durum">Kayıtlar yükleniyor…</div></div>' +
+      '<div class="ikili"><button class="btn btn-s" data-x="git" data-g="yeniKayit">YENİ KAYIT</button>' + geri('ana') + '</div>');
+  };
+  B.kayitlar = function () {
+    $('#ara').addEventListener('input', function () { S.v.ara = this.value; listeCiz(); });
+    if (S.kayitlar) listeCiz();
+    if (S.kayitlar && Date.now() - S.kayitZaman < 20000) return;
+    kayitlariYukle().then(function () { if (S.gorunum === 'kayitlar') ciz(); }).catch(function (e) { hataIsle(e); });
+  };
+  function kayitlariYukle() {
+    return api('kayitListesi', { sess: S.sess }).then(function (r) { S.kayitlar = r.liste; S.kayitZaman = Date.now(); return r.liste; });
+  }
+  function listeCiz() {
+    var l = $('#liste');
+    if (!l || !S.kayitlar) return;
+    var q = katla((S.v.ara || '').trim()), rq = (S.v.ara || '').replace(/\D/g, ''), f = S.v.f || 'HEPSI';
+    var sonuc = S.kayitlar.filter(function (h) {
+      if (f === 'SILINDI') { if (h.durum !== 'SİLİNDİ') return false; }
+      else if (h.durum === 'SİLİNDİ') return false;
+      if (f === 'YONETICI' && h.yetki === YETKI.K) return false;
+      if ([KAT.C, KAT.T, KAT.M].indexOf(f) >= 0 && h.kat !== f) return false;
+      if (!q) return true;
+      return [h.ad, h.firma, h.gorev, h.markaAd, h.email].some(function (x) { return katla(x).indexOf(q) >= 0; }) || (rq.length >= 3 && String(h.gsm).replace(/\D/g, '').indexOf(rq) >= 0);
+    }).sort(function (a, b) { return b.kayit - a.kayit; });
+    if (!sonuc.length) { l.innerHTML = '<div class="bos-durum">' + (S.kayitlar.length > 1 ? 'Aramanıza uyan kayıt yok.' : 'Henüz kayıt yok. YENİ KAYIT ile fuar katılımcılarını kaydedin.') + '</div>'; return; }
+    l.innerHTML = sonuc.slice(0, 300).map(function (h) {
+      var bilgi = [h.kat === KAT.T ? '' : h.firma, h.gorev, h.gsm].filter(Boolean).map(esc).join(' · ');
+      return '<button class="satir" data-x="kisi" data-id="' + esc(h.id) + '"><span class="satir-bilgi"><b>' + esc(h.ad) + '</b><small>' +
+        '<span class="etiket ' + katSinif(h.kat) + '">' + katKisa(h.kat) + (h.kat === KAT.T && h.markaAd ? ' · ' + esc(h.markaAd) : '') + '</span>' +
+        (h.yetki !== YETKI.K ? '<span class="etiket y">' + (h.yetki === YETKI.A ? 'ANA' : 'YÖNETİCİ') + '</span>' : '') +
+        (h.durum === 'SİLİNDİ' ? '<span class="etiket s">SİLİNDİ</span>' : '') + bilgi +
+        (h.okuttu !== undefined ? ' · ' + sayi(h.okuttu + h.okutuldu) + ' eşleşme' : '') + '</small></span><span class="satir-ok" aria-hidden="true">›</span></button>';
+    }).join('') + (sonuc.length > 300 ? '<div class="bos-durum">İlk 300 sonuç gösteriliyor. Aramayı daraltın.</div>' : '');
+  }
+
+  V.kisi = function (v) {
+    var h = (S.kayitlar || []).filter(function (x) { return x.id === v.id; })[0];
+    if (!h) return sayfa('<div class="bos-durum">Kayıt bulunamadı.</div>' + geri('kayitlar'));
+    var silinmis = h.durum === 'SİLİNDİ';
+    var duzeltebilir = !silinmis && (ana() || (S.cfg.duzenleme && h.yetki === YETKI.K));
+    var dl = [['KATEGORİ', h.kat + (h.markaAd ? ' · ' + h.markaAd : '')], ['FİRMA', h.firma], ['GÖREVİ', h.gorev], ['GSM', h.gsm], ['E-MAIL', h.email || '—'],
+      ['YETKİ', h.yetki], ['KAYIT', tarih(h.kayit) + (h.kaydeden ? ' · ' + h.kaydeden : '')]];
+    if (h.okuttu !== undefined) dl.push(['EŞLEŞME', sayi(h.okuttu) + ' okuttu · ' + sayi(h.okutuldu) + ' okutuldu']);
+    if (!silinmis) dl.push(['OTURUM', h.oturum ? 'Açık (bir cihazda giriş yapılmış)' : 'Kapalı']);
+    if (h.yetki !== YETKI.K) dl.push(['ŞİFRE', h.sifreli ? 'Kendi şifresi' : 'Varsayılan şifre']);
+    if (silinmis) dl.push(['DURUM', 'SİLİNDİ']);
+    var e = '';
+    if (!silinmis) e += '<div class="ikili"><button class="btn" data-x="hesapQr" data-id="' + esc(h.id) + '">' + IKON.qr + 'QR KODU</button>' +
+      (duzeltebilir ? '<button class="btn" data-x="duzelt" data-id="' + esc(h.id) + '">DÜZELT</button>' : '<button class="btn" data-x="girisQrKisi" data-id="' + esc(h.id) + '">GİRİŞ QR</button>') + '</div>';
+    var benim = S.me && h.id === S.me.id;
+    if (!silinmis && h.oturum && !benim && (ana() || h.yetki === YETKI.K)) e += '<button class="btn" data-x="oturumKapat" data-id="' + esc(h.id) + '">OTURUMU KAPAT</button>';
+    if (ana()) {
+      if (!silinmis && h.sifreli && !benim) e += '<button class="btn" data-x="sifreSifirla" data-id="' + esc(h.id) + '">ŞİFREYİ VARSAYILANA DÖNDÜR</button>';
+      if (!silinmis) e += '<button class="btn" data-x="rapor" data-tip="kisi" data-id="' + esc(h.id) + '">EŞLEŞMELERİ GÖRÜNTÜLE</button>';
+      if (!silinmis && h.yetki === YETKI.K) e += '<button class="btn btn-s" data-x="yetki" data-id="' + esc(h.id) + '" data-y="YONETICI">YÖNETİCİ YAP</button>';
+      if (!silinmis && h.yetki === YETKI.Y) e += '<button class="btn" data-x="yetki" data-id="' + esc(h.id) + '" data-y="KULLANICI">YÖNETİCİLİKTEN ÇIKAR</button>';
+      if (!silinmis && h.yetki !== YETKI.A) e += '<button class="btn btn-tehlike" data-x="sil" data-id="' + esc(h.id) + '">KAYDI SİL</button>';
+      if (silinmis) e += '<button class="btn btn-s" data-x="geriAl" data-id="' + esc(h.id) + '">KAYDI GERİ AL</button>';
+    }
+    return sayfa(rozetler(h) + '<div class="hesap"><h2>' + esc(h.ad) + '</h2></div>' +
+      '<dl class="detay">' + dl.map(function (x) { return '<dt>' + x[0] + '</dt><dd>' + esc(x[1]) + '</dd>'; }).join('') + '</dl>' +
+      e + '<div class="hata" id="kisi-hata" role="alert"></div>' + geri('kayitlar', 'KAYITLARA DÖN'));
+  };
+
+  V.duzelt = function (v) {
+    var h = (S.kayitlar || []).filter(function (x) { return x.id === v.id; })[0];
+    if (!h) return sayfa('<div class="bos-durum">Kayıt bulunamadı.</div>' + geri('kayitlar'));
+    if (!v.kat) v.kat = h.kat;
+    return sayfa(rozetler() + kayitFormu('duzenle', h) + '<button class="btn" data-x="kisi" data-id="' + esc(h.id) + '">VAZGEÇ</button>');
+  };
+  B.duzelt = function (v) {
+    var h = (S.kayitlar || []).filter(function (x) { return x.id === v.id; })[0];
+    if (!h) return;
+    formBagla(function (d) {
+      return api('hesapGuncelle', Object.assign({ sess: S.sess, id: v.id }, d)).then(function (r) {
+        if (S.me && r.hesap.id === S.me.id) benAyarla(r.hesap);
+        return kayitlariYukle().then(function () { git('kisi', { id: r.hesap.id }); toast('Kayıt düzeltildi.'); });
+      });
+    }, h);
+  };
+
+  /* ------------------------------------------------------------------ eşleşmeler (ana yönetici) */
+  V.eslesmeler = function (v) {
+    var d = v.veri, mf = v.marka || '';
+    var markalar = d ? d.satirlar.map(function (r) { return r.marka; }).filter(function (m, i, a) { return m && a.indexOf(m) === i; }).sort(function (a, b) { return a.localeCompare(b, 'tr'); }) : [];
+    return sayfa(rozetler() + '<h2 class="baslik">EŞLEŞMELER</h2>' +
+      '<label class="arama">' + IKON.ara + '<input id="ara" type="search" placeholder="ARAMA" autocomplete="off" aria-label="Kişi, firma ya da marka ara" value="' + esc(v.ara || '') + '"></label>' +
+      '<label class="alan" for="marka-suz"><span>MARKA</span><select id="marka-suz"><option value="">Tüm markalar</option>' + markalar.map(function (m) { return '<option' + (m === mf ? ' selected' : '') + '>' + esc(m) + '</option>'; }).join('') + '</select></label>' +
+      '<p class="not" id="es-say">' + (d ? '' : 'Yükleniyor…') + '</p>' +
+      '<div class="etablo-kap"><table class="etablo"><thead><tr><th>TARİH-SAAT</th><th>EŞLEŞME</th></tr></thead><tbody id="es-govde"></tbody></table></div>' +
+      '<div class="ikili"><button class="btn" data-x="eslesmeCsv"' + (d ? '' : ' disabled') + '>CSV İNDİR</button>' + geri('ana') + '</div>');
+  };
+  B.eslesmeler = function (v) {
+    $('#ara').addEventListener('input', function () { S.v.ara = this.value; eslesmeCiz(); });
+    $('#marka-suz').addEventListener('change', function () { S.v.marka = this.value; eslesmeCiz(); });
+    if (v.veri) return eslesmeCiz();
+    api('eslesmeler', { sess: S.sess }).then(function (r) { if (S.gorunum !== 'eslesmeler') return; S.v.veri = r; ciz(); }).catch(function (e) { hataIsle(e); });
+  };
+  function eslesmeSuz() {
+    var d = S.v.veri; if (!d) return [];
+    var q = katla((S.v.ara || '').trim()), mf = S.v.marka || '';
+    return d.satirlar.filter(function (r) {
+      if (mf && r.marka !== mf) return false;
+      return !q || [r.sad, r.sfirma, r.tad, r.tfirma, r.marka, r.sgorev, r.tgorev].some(function (x) { return katla(x).indexOf(q) >= 0; });
+    });
+  }
+  function eslesmeCiz() {
+    var g = $('#es-govde'); if (!g) return;
+    var l = eslesmeSuz().slice().reverse();
+    $('#es-say').textContent = sayi(l.length) + ' eşleşme';
+    g.innerHTML = l.slice(0, 400).map(function (r) {
+      return '<tr><td>' + tarih(r.t) + '</td><td>' + esc(r.tad) + '<small>' + esc([r.tgorev, r.tfirma].filter(Boolean).join(' · ')) + '</small><small>Okutan: ' + esc(r.sad) + ' (' + esc(r.sfirma) + ')</small>' +
+        (r.marka ? '<small><i>' + esc(r.marka) + '</i></small>' : '') + '</td></tr>';
+    }).join('') || '<tr><td></td><td>Eşleşme yok.</td></tr>';
+  }
+
+  /* ------------------------------------------------------------------ markalar */
+  V.markalar = function (v) {
+    var l = v.liste;
+    return sayfa(rozetler() + '<h2 class="baslik">MARKALAR</h2>' +
+      (ana() ? '<form class="form" id="f-marka" novalidate><label class="alan" for="adlar"><span>MARKA EKLE (her satıra bir marka)</span><textarea id="adlar" placeholder="BOSCH&#10;VALEO&#10;MANN FILTER" style="min-height:90px"></textarea></label>' +
+        '<button class="btn btn-s" id="m-gonder" type="submit" disabled>MARKALARI EKLE</button><div class="hata" id="m-hata" role="alert"></div></form>'
+        : '<p class="not">Markaları ana hesap ekler. Marka temsilcileri kayıt olurken bu listeden markasını seçer.</p>') +
+      '<div class="liste" id="m-liste">' + (!l ? '<div class="bos-durum">Markalar yükleniyor…</div>' : !l.length ? '<div class="bos-durum">' + (ana() ? 'Henüz marka yok. Yukarıdan ekleyin.' : 'Henüz marka yok. Ana hesap eklediğinde burada görünür.') + '</div>' :
+        l.map(function (m) {
+          return '<div class="satir"><span class="satir-bilgi"><b>' + esc(m.ad) + '</b><small>' + sayi(m.temsilci) + ' temsilci' +
+            (m.eslesme !== undefined ? ' · ' + sayi(m.kisi) + ' kişi · ' + sayi(m.eslesme) + ' eşleşme' : '') + '</small></span><span class="satir-eylem">' +
+            (ana() ? '<button class="link" data-x="rapor" data-tip="marka" data-id="' + esc(m.id) + '">rapor</button>' : '') +
+            '<button class="ikon" data-x="markaQr" data-id="' + esc(m.id) + '" aria-label="' + esc(m.ad) + ' stant QR kodu">' + IKON.qr + '</button>' +
+            (ana() && !m.temsilci ? '<button class="link" data-x="markaSil" data-id="' + esc(m.id) + '" style="color:var(--kirmizi)">kaldır</button>' : '') + '</span></div>';
+        }).join('')) + '</div>' +
+      '<p class="not">Asıl eşleşme, marka personelinin müşteri QR kodunu okutmasıyla oluşur. Stant QR kodu, personelin meşgul olduğu anlarda müşterinin standı kendi telefonuyla okutması içindir.</p>' +
+      '<div class="ikili"><button class="btn" data-x="zip">STANT QR KODLARI (ZIP)</button>' + geri('ana') + '</div>');
+  };
+  B.markalar = function (v) {
+    var f = $('#f-marka'), t = $('#adlar'), btn = $('#m-gonder');
+    if (!f) { if (!v.liste) api('markaListesi', { sess: S.sess }).then(function (r) { if (S.gorunum !== 'markalar') return; S.v.liste = r.liste; ciz(); }).catch(function (e) { hataIsle(e); }); return; }
+    t.addEventListener('input', function () { btn.disabled = t.value.trim().length < 2; });
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var adlar = t.value.split(/\r?\n/).map(function (s) { return s.trim(); }).filter(Boolean);
+      if (!adlar.length) return;
+      mesgul(btn, true, 'EKLENİYOR…');
+      api('markaEkle', { sess: S.sess, adlar: adlar }).then(function (r) {
+        S.markalar = r.markalar; onbellegeYaz();
+        var eklenen = r.sonuc.filter(function (s) { return s.durum === 'EKLENDİ'; }).length, var_ = r.sonuc.length - eklenen;
+        toast(eklenen + ' marka eklendi' + (var_ ? ', ' + var_ + ' zaten listedeydi.' : '.'));
+        S.v.liste = null; ciz();
+      }).catch(function (er) { mesgul(btn, false); hataIsle(er, 'm-hata'); });
+    });
+    if (v.liste) return;
+    api('markaListesi', { sess: S.sess }).then(function (r) { if (S.gorunum !== 'markalar') return; S.v.liste = r.liste; ciz(); }).catch(function (e) { hataIsle(e); });
+  };
+
+  /* ------------------------------------------------------------------ yöneticiler (ana yönetici) */
+  V.yoneticiler = function (v) {
+    var l = (S.kayitlar || []).filter(function (h) { return h.durum !== 'SİLİNDİ'; });
+    var yon_ = l.filter(function (h) { return h.yetki !== YETKI.K; });
+    return sayfa(rozetler() + '<h2 class="baslik">YÖNETİCİLER</h2>' +
+      '<p class="not">Yöneticiler yeni kayıt açar ve kayıtları görür; kimseyi silemez. Eşleşmeleri, ayarları ve logoları yalnızca ana hesap görür ve değiştirir.</p>' +
+      '<div class="liste">' + (!S.kayitlar ? '<div class="bos-durum">Yükleniyor…</div>' : yon_.map(function (h) {
+        return '<div class="satir"><span class="satir-bilgi"><b>' + esc(h.ad) + '</b><small><span class="etiket y">' + (h.yetki === YETKI.A ? 'ANA HESAP' : 'YÖNETİCİ') + '</span>' + esc([h.gorev, h.gsm].filter(Boolean).join(' · ')) + '</small></span>' +
+          (h.yetki === YETKI.Y ? '<span class="satir-eylem"><button class="link" data-x="yetki" data-id="' + esc(h.id) + '" data-y="KULLANICI">çıkar</button></span>' : '') + '</div>';
+      }).join('')) + '</div>' +
+      '<section class="kutu"><h3>YÖNETİCİ ATA</h3><p class="not sol">Yönetici yapacağınız kişi önce kayıtlı olmalı. Adını ya da numarasını yazıp seçin.</p>' +
+      '<label class="arama">' + IKON.ara + '<input id="ara" type="search" placeholder="KİŞİ ARA" autocomplete="off" aria-label="Yönetici yapılacak kişiyi ara" value="' + esc(v.ara || '') + '"></label>' +
+      '<div id="adaylar"></div></section>' +
+      '<div class="ikili"><button class="btn btn-s" data-x="git" data-g="yeniKayit">YENİ KAYIT</button>' + geri('ana') + '</div>');
+  };
+  function adaylarCiz() {
+    var k = $('#adaylar'); if (!k) return;
+    var q = katla((S.v.ara || '').trim()), rq = (S.v.ara || '').replace(/\D/g, '');
+    if (!q) { k.innerHTML = ''; return; }
+    var l = (S.kayitlar || []).filter(function (h) {
+      return h.durum !== 'SİLİNDİ' && h.yetki === YETKI.K && ([h.ad, h.firma, h.gorev].some(function (x) { return katla(x).indexOf(q) >= 0; }) || (rq.length >= 3 && String(h.gsm).replace(/\D/g, '').indexOf(rq) >= 0));
+    }).slice(0, 20);
+    k.innerHTML = !l.length ? '<p class="not sol">Bu aramaya uyan kayıt yok. Kişiyi önce YENİ KAYIT ile kaydedin.</p>' : '<div class="liste">' + l.map(function (h) {
+      return '<div class="satir"><span class="satir-bilgi"><b>' + esc(h.ad) + '</b><small>' + esc([katKisa(h.kat), h.firma, h.gsm].filter(Boolean).join(' · ')) + '</small></span>' +
+        '<span class="satir-eylem"><button class="btn btn-s" style="min-height:36px;padding:6px 10px;font-size:10.5px;width:auto" data-x="yetki" data-id="' + esc(h.id) + '" data-y="YONETICI">YÖNETİCİ YAP</button></span></div>';
+    }).join('') + '</div>';
+  }
+  B.yoneticiler = function () {
+    $('#ara').addEventListener('input', function () { S.v.ara = this.value; adaylarCiz(); });
+    adaylarCiz();
+    if (!S.kayitlar || Date.now() - S.kayitZaman > 20000) kayitlariYukle().then(function () { if (S.gorunum === 'yoneticiler') ciz(); }).catch(function (e) { hataIsle(e); });
+  };
+
+  /* ------------------------------------------------------------------ canlı özet */
+  V.ozet = function (v) {
+    var r = v.veri, bas = ana() ? 'CANLI ÖZET' : 'KAYIT DURUMU';
+    if (!r) return sayfa(rozetler() + '<h2 class="baslik">' + bas + '</h2><div class="yukleniyor"><div class="serit"></div><p>Hazırlanıyor…</p></div>' + geri('ana'));
+    var k = r.kayit;
+    var h = '<h2 class="baslik">' + bas + '</h2><p class="not">30 saniyede bir yenilenir · son güncelleme ' + saat(r.zaman) + '</p>' +
+      '<div class="kpi"><div><b>' + sayi(k.toplam) + '</b><span>TOPLAM KAYIT</span></div><div><b>' + sayi(k.bugun) + '</b><span>BUGÜNKÜ KAYIT</span></div>' +
+      '<div><b>' + sayi(k.musteri) + '</b><span>MÜŞTERİ</span></div><div><b>' + sayi(k.temsilci) + '</b><span>MARKA TEMSİLCİSİ</span></div>' +
+      '<div><b>' + sayi(k.calisan) + '</b><span>MARTAŞ ÇALIŞANI</span></div><div><b>' + sayi(r.markaSayisi) + '</b><span>MARKA</span></div></div>';
+    if (r.eslesme) {
+      var mx = Math.max.apply(null, r.markalar.map(function (m) { return m.kisi; }).concat([1]));
+      h += '<div class="kpi"><div><b>' + sayi(r.eslesme.toplam) + '</b><span>TOPLAM EŞLEŞME</span></div><div><b>' + sayi(r.eslesme.bugun) + '</b><span>BUGÜN · SON 1 SAAT ' + sayi(r.eslesme.sonSaat) + '</span></div></div>' +
+        '<section class="bolum"><h3>EN ÇOK EŞLEŞEN MARKALAR</h3><div class="cubuklar">' + (r.markalar.length ? r.markalar.map(function (m) {
+          return '<div class="cubuk-satir"><span>' + esc(m.ad) + '</span><em>' + sayi(m.kisi) + ' kişi · ' + sayi(m.eslesme) + ' eşleşme</em><div class="cubuk-yol"><i style="width:' + Math.max(2, m.kisi / mx * 100).toFixed(1) + '%"></i></div></div>';
+        }).join('') : '<p class="not sol">Henüz eşleşme yok.</p>') + '</div></section>' +
+        '<section class="bolum"><h3>BUGÜN SAAT SAAT EŞLEŞME</h3>' + saatGrafik(r.saatlik) + '</section>' +
+        (r.son.length ? '<section class="bolum"><h3>SON EŞLEŞMELER</h3><div class="akis">' + r.son.map(function (o) {
+          return '<div><time>' + saat(o.t) + '</time><span>' + esc(o.okutan) + ' → <b>' + esc(o.okutulan) + '</b>' + (o.marka ? ' <i>' + esc(o.marka) + '</i>' : '') + '</span></div>';
+        }).join('') + '</div></section>' : '') +
+        (r.etkinlikler.length > 1 ? '<section class="bolum"><h3>ETKİNLİĞE GÖRE</h3><div class="akis">' + r.etkinlikler.map(function (e) { return '<div><time>' + sayi(e.eslesme) + '</time><span>' + esc(e.ad) + '</span></div>'; }).join('') + '</div></section>' : '');
+    }
+    return sayfa(rozetler() + h + geri('ana'));
+  };
+  B.ozet = function () {
+    var yukle_ = function () { api('ozet', { sess: S.sess }).then(function (r) { if (S.gorunum !== 'ozet') return; S.v.veri = r; yerindeCiz(); }).catch(function (e) { hataIsle(e); }); };
+    if (!S.v.veri) yukle_();
+    if (!S.zamanlayici) S.zamanlayici = setInterval(yukle_, 30000);
+  };
+  function saatGrafik(d) {
+    var mx = Math.max.apply(null, d.concat([1])), W = 300, x0 = 26, y0 = 8, yh = 84, bw = (W - x0 - 2) / 24, h = '';
+    h += '<line class="k" x1="' + x0 + '" x2="' + W + '" y1="' + y0 + '" y2="' + y0 + '"/><line class="k" x1="' + x0 + '" x2="' + W + '" y1="' + (y0 + yh) + '" y2="' + (y0 + yh) + '"/>';
+    h += '<text class="e" x="' + (x0 - 4) + '" y="' + (y0 + 3) + '" text-anchor="end">' + mx + '</text><text class="e" x="' + (x0 - 4) + '" y="' + (y0 + yh + 3) + '" text-anchor="end">0</text>';
+    for (var i = 0; i < 24; i++) {
+      var bh = d[i] / mx * yh, x = x0 + i * bw + 1.5;
+      h += '<rect class="z" x="' + x.toFixed(1) + '" y="' + y0 + '" width="' + (bw - 3).toFixed(1) + '" height="' + yh + '"/>';
+      if (d[i]) h += '<rect class="c" x="' + x.toFixed(1) + '" y="' + (y0 + yh - bh).toFixed(1) + '" width="' + (bw - 3).toFixed(1) + '" height="' + bh.toFixed(1) + '"><title>' + iki(i) + ':00 · ' + d[i] + ' eşleşme</title></rect>';
+      if (i % 3 === 0) h += '<text class="e" x="' + (x + (bw - 3) / 2).toFixed(1) + '" y="' + (y0 + yh + 14) + '" text-anchor="middle">' + iki(i) + '</text>';
+    }
+    return '<svg class="saat-grafik" viewBox="0 0 ' + W + ' 112" role="img" aria-label="Bugün saatlere göre eşleşme sayısı">' + h + '</svg>';
+  }
+
+  /* ------------------------------------------------------------------ ayarlar ve logolar (ana yönetici) */
+  V.ayarlar = function (v) {
+    var a = v.ayar;
+    if (!a) return sayfa(rozetler() + '<h2 class="baslik">AYARLAR VE LOGOLAR</h2><div class="yukleniyor"><div class="serit"></div><p>Ayarlar yükleniyor…</p></div>' + geri('ana'));
+    var logo = function (tur) { return S.logolar.filter(function (l) { return l.tur === tur; }); };
+    var izgara = function (l) {
+      return l.length ? '<div class="logo-izgara">' + l.map(function (x) {
+        return '<figure' + (x.tur === 'BANT' ? ' class="bant"' : '') + '><img src="' + esc(x.data) + '" alt="' + esc(x.ad) + '"><button data-x="logoSil" data-id="' + esc(x.id) + '">KALDIR</button></figure>';
+      }).join('') + '</div>' : '';
+    };
+    var sw = function (id, baslik, aciklama) { return '<label class="anahtar"><input type="checkbox" id="' + id + '"' + (/^evet$/i.test(a[id]) ? ' checked' : '') + '><span>' + baslik + '<small>' + aciklama + '</small></span></label>'; };
+    var sp = S.logolar.filter(function (l) { return l.tur === 'SPONSOR' || l.tur === 'BANT'; });
+    return sayfa(rozetler() + '<h2 class="baslik">AYARLAR VE LOGOLAR</h2>' +
+      '<section class="kutu"><h3>YAZILAR</h3>' +
+      '<label class="alan" for="a-alt"><span>LOGONUN ALTINDAKİ YAZI</span><input id="a-alt" maxlength="60" value="' + esc(a.ALT_YAZI) + '"></label>' +
+      '<label class="alan" for="a-fuar"><span>FUAR BİLGİLERİ (satır satır)</span><textarea id="a-fuar" maxlength="600" placeholder="24 Ekim 2026&#10;Fuar alanının adı&#10;10:00 - 18:00">' + esc(a.FUAR_BILGI) + '</textarea></label>' +
+      '<button class="btn btn-s" data-x="ayarKaydet" data-grup="yazi">YAZILARI KAYDET</button></section>' +
+      '<section class="kutu"><h3>ÜST LOGO (AUTOMARTASHOW)</h3>' + izgara(logo('UST')) +
+      '<button class="btn" data-x="logoYukle" data-t="UST">' + (logo('UST').length ? 'DEĞİŞTİR' : 'GÖRSEL YÜKLE') + '</button><p class="not sol">Yüklemezseniz yazıyla oluşturulan logo kullanılır.</p></section>' +
+      '<section class="kutu"><h3>MARKALARIN TOPLU LOGOSU</h3>' + izgara(sp) +
+      '<button class="btn" data-x="logoYukle" data-t="SPONSOR">LOGO YÜKLE</button><p class="not sol">Hazır logo bandını tek görsel olarak yükleyin; geniş görseller tam genişlikte gösterilir. İsterseniz logoları tek tek de yükleyebilirsiniz.</p></section>' +
+      '<section class="kutu"><h3>ALT LOGO (MARTAŞ)</h3>' + izgara(logo('ALT')) +
+      '<button class="btn" data-x="logoYukle" data-t="ALT">' + (logo('ALT').length ? 'DEĞİŞTİR' : 'GÖRSEL YÜKLE') + '</button></section>' +
+      '<section class="kutu"><h3>VARSAYILAN ŞİFRE</h3>' +
+      '<label class="alan" for="a-ks"><span>HERKESİN GİRİŞ ŞİFRESİ</span><input id="a-ks" value="' + esc(a.KULLANICI_SIFRESI) + '" autocomplete="off"></label>' +
+      '<p class="not sol">Çalışanlar, marka personeli ve müşteriler bu şifreyle girer. Yöneticiler ŞİFREMİ DEĞİŞTİR ile kendi şifrelerini belirler; belirlemeyen yönetici de bu şifreyle girer.</p>' +
+      '<button class="btn btn-s" data-x="ayarKaydet" data-grup="sifre">ŞİFREYİ KAYDET</button></section>' +
+      '<section class="kutu"><h3>SEÇENEKLER</h3>' +
+      sw('KENDI_KAYIT', 'Fuar kayıt QR kodu ile kendi kaydı', 'Açıkken kayıt QR kodunu okutan katılımcı kaydını kendisi oluşturur. Kapalıyken kayıtları yalnızca yöneticiler açar.') +
+      sw('YONETICI_DUZENLER', 'Yöneticiler kayıt düzeltebilir', 'Yazım hatalarını düzeltmek için. Silme her durumda yalnızca ana hesaptadır.') +
+      sw('KVKK_ONAY', 'Kayıtta KVKK onay kutusu', 'İşaretlenmeden kayıt yapılamaz.') +
+      '<label class="alan" for="a-kvkk"><span>KVKK ONAY METNİ</span><textarea id="a-kvkk" maxlength="600" style="min-height:90px">' + esc(a.KVKK_METNI) + '</textarea></label>' +
+      '<label class="alan" for="a-tekrar"><span>TEKRAR OKUTMA SÜRESİ (DAKİKA)</span><input id="a-tekrar" type="number" min="0" max="360" inputmode="numeric" value="' + esc(a.TEKRAR_DK) + '"></label>' +
+      '<button class="btn btn-s" data-x="ayarKaydet" data-grup="secenek">SEÇENEKLERİ KAYDET</button></section>' +
+      '<section class="kutu"><h3>ADRESLER</h3>' +
+      '<label class="alan" for="a-uygulama"><span>UYGULAMA ADRESİ</span><input id="a-uygulama" type="url" inputmode="url" placeholder="https://…" autocomplete="off" spellcheck="false" value="' + esc(a.UYGULAMA_ADRESI || '') + '"></label>' +
+      '<p class="not sol">Doluysa Google bağlantısını açan herkes bu adrese aktarılır, kişisel ve kayıt QR kodları bu adresle üretilir. iPhone Safari\'de oturumun kapanmaması ve Google uyarı şeridinin çıkmaması bunu sağlar. Boşaltırsanız uygulama eskisi gibi Google adresinde açılır.</p>' +
+      '<label class="alan" for="a-okutma"><span>OKUTMA SAYFASININ ADRESİ</span><input id="a-okutma" type="url" inputmode="url" placeholder="https://…" autocomplete="off" spellcheck="false" value="' + esc(a.OKUTMA_SAYFASI || '') + '"></label>' +
+      '<p class="not sol">QR OKUT bu sayfayı açar: kamera canlı tarar, kodu görür görmez eşleşmeyi kaydeder ve art arda okutmaya devam eder. Boş bırakılırsa QR OKUT fotoğraf çekerek okur.</p>' +
+      '<button class="btn btn-s" data-x="ayarKaydet" data-grup="okutma">ADRESLERİ KAYDET</button></section>' +
+      '<section class="kutu"><h3>DIŞA AKTARMA</h3>' +
+      '<button class="btn" data-x="kayitCsv">TÜM KAYITLAR (CSV)</button><button class="btn" data-x="eslesmeCsvTum">TÜM EŞLEŞMELER (CSV)</button><button class="btn" data-x="zip">STANT QR KODLARI (ZIP)</button>' +
+      '<p class="not sol">Asıl kayıtlar Google E-Tablo\'dadır ve anlık güncellenir; CSV dosyaları Excel ile açılır.</p></section>' +
+      geri('ana'));
+  };
+  B.ayarlar = function (v) {
+    if (v.ayar) return;
+    api('ayarlariGetir', { sess: S.sess }).then(function (r) { if (S.gorunum !== 'ayarlar') return; S.v.ayar = r.ayarlar; ciz(); }).catch(function (e) { hataIsle(e); });
+  };
+
+  var logoTur = 'SPONSOR';
+  logoDosya.addEventListener('change', function () {
+    var dosyalar = Array.prototype.slice.call(logoDosya.files || []);
+    logoDosya.value = '';
+    if (!dosyalar.length) return;
+    toast(dosyalar.length > 1 ? dosyalar.length + ' logo yükleniyor…' : 'Logo yükleniyor…');
+    var sira = Promise.resolve(), basarili = 0;
+    dosyalar.forEach(function (f) {
+      sira = sira.then(function () { return logoHazirla(f); }).then(function (d) {
+        var tur = logoTur === 'SPONSOR' && d.oran > 3.2 ? 'BANT' : logoTur;
+        return api('logoEkle', { sess: S.sess, tur: tur, ad: f.name.replace(/\.[^.]+$/, ''), data: d.url });
+      }).then(function (r) { basarili++; S.logolar = r.logolar; S.logoSurum = r.logoSurum; onbellegeYaz(); })
+        .catch(function (e) { toast((e && e.msg) || (f.name + ' yüklenemedi.')); });
+    });
+    sira.then(function () { if (basarili) { toast(basarili + ' logo eklendi.'); if (S.gorunum === 'ayarlar') yerindeCiz(); } });
+  });
+  function logoHazirla(f) {
+    return new Promise(function (ok, no) {
+      if (!/^image\//.test(f.type)) return no({ msg: f.name + ' bir görsel dosyası değil.' });
+      var u = URL.createObjectURL(f), im = new Image();
+      im.onload = function () {
+        var w = im.naturalWidth || 400, h = im.naturalHeight || 200, oran = w / h;
+        URL.revokeObjectURL(u);
+        if (f.type === 'image/svg+xml' && f.size < 350000) {
+          var r = new FileReader();
+          r.onload = function () { ok({ url: r.result, oran: oran }); };
+          r.onerror = function () { no({ msg: f.name + ' okunamadı.' }); };
+          return r.readAsDataURL(f);
+        }
+        var genis = oran > 3.2 && logoTur === 'SPONSOR';
+        var maxW = genis ? 1600 : logoTur === 'SPONSOR' ? 600 : 1000, maxH = genis ? 560 : 260;
+        var s = Math.min(1, maxW / w, maxH / h), c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(w * s)); c.height = Math.max(1, Math.round(h * s));
+        c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+        var d = c.toDataURL('image/webp', 0.92);
+        if (d.indexOf('data:image/webp') !== 0) d = c.toDataURL('image/png');
+        if (d.length > 780000) {
+          var c2 = document.createElement('canvas'); c2.width = c.width; c2.height = c.height;
+          var x2 = c2.getContext('2d'); x2.fillStyle = '#ffffff'; x2.fillRect(0, 0, c2.width, c2.height); x2.drawImage(c, 0, 0);
+          d = c2.toDataURL('image/jpeg', 0.85);
+        }
+        ok({ url: d, oran: oran });
+      };
+      im.onerror = function () { URL.revokeObjectURL(u); no({ msg: f.name + ' açılamadı.' }); };
+      im.src = u;
+    });
+  }
+
+  /* ------------------------------------------------------------------ QR üretimi ve indirme */
+  function kayitUrl() { return S.url || (location.href.split('#')[0].split('?')[0]); }
+  function qrMetni(h) {
+    var p = '?q=' + encodeURIComponent(h.id) + '&n=' + encodeURIComponent(h.ad);
+    if (h.gsm) p += '&g=' + encodeURIComponent(String(h.gsm).replace(/\s/g, ''));
+    return kayitUrl() + p;
+  }
+  function qrModel(metin) { var q = qrcode(0, 'M'); q.addData(metin); q.make(); return q; }
+  function qrYol(q) {
+    var n = q.getModuleCount(), d = '';
+    for (var r = 0; r < n; r++) {
+      var c = 0;
+      while (c < n) {
+        if (q.isDark(r, c)) { var s = c; while (c < n && q.isDark(r, c)) c++; d += 'M' + s + ' ' + r + 'h' + (c - s) + 'v1h-' + (c - s) + 'z'; } else c++;
+      }
+    }
+    return d;
+  }
+  function qrSvg(metin) {
+    var q = qrModel(metin), n = q.getModuleCount();
+    return '<svg viewBox="-4 -4 ' + (n + 8) + ' ' + (n + 8) + '" role="img" aria-label="QR kod" shape-rendering="crispEdges"><rect x="-4" y="-4" width="' + (n + 8) + '" height="' + (n + 8) + '" fill="#fff"/><path d="' + qrYol(q) + '" fill="#000"/></svg>';
+  }
+  function qrSvgDosya(metin, etiket, alt) {
+    var q = qrModel(metin), n = q.getModuleCount(), W = n + 8, ek = etiket ? Math.round(W * 0.3) : 0, H = W + ek, mm = 80, t = '';
+    if (etiket) {
+      var fs = Math.min(W * 0.078, (W * 1.65) / Math.max(8, etiket.length));
+      t = '<text x="' + (W / 2 - 4) + '" y="' + (n + 4 + ek * 0.40).toFixed(2) + '" text-anchor="middle" font-family="Montserrat, Arial, sans-serif" font-weight="800" font-size="' + fs.toFixed(2) + '" fill="#151314">' + esc(etiket) + '</text>' +
+        '<text x="' + (W / 2 - 4) + '" y="' + (n + 4 + ek * 0.76).toFixed(2) + '" text-anchor="middle" font-family="Montserrat, Arial, sans-serif" font-weight="600" font-size="' + (W * 0.036).toFixed(2) + '" letter-spacing="' + (W * 0.004).toFixed(2) + '" fill="#e1251b">' + esc(alt || 'AUTOMARTASHOW') + '</text>';
+    }
+    return '<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="' + mm + 'mm" height="' + (mm * H / W).toFixed(2) + 'mm" viewBox="-4 -4 ' + W + ' ' + H + '" shape-rendering="crispEdges">' +
+      '<rect x="-4" y="-4" width="' + W + '" height="' + H + '" fill="#fff"/><path d="' + qrYol(q) + '" fill="#000"/>' + t + '</svg>';
+  }
+  function qrJpg(metin, etiket, alt) {
+    var q = qrModel(metin), n = q.getModuleCount(), W0 = n + 8, s = Math.max(8, Math.floor(2400 / W0)), W = W0 * s;
+    var ek = etiket ? Math.round(W * 0.3) : 0, c = document.createElement('canvas');
+    c.width = W; c.height = W + ek;
+    var x = c.getContext('2d');
+    x.fillStyle = '#ffffff'; x.fillRect(0, 0, c.width, c.height);
+    x.fillStyle = '#000000';
+    for (var r = 0; r < n; r++) for (var k = 0; k < n; k++) if (q.isDark(r, k)) x.fillRect((k + 4) * s, (r + 4) * s, s, s);
+    var bitir = function () {
+      if (etiket) {
+        var fs = Math.min(W * 0.078, (W * 1.65) / Math.max(8, etiket.length));
+        x.textAlign = 'center'; x.textBaseline = 'alphabetic';
+        x.fillStyle = '#151314'; x.font = '800 ' + Math.round(fs) + 'px Montserrat, Arial, sans-serif';
+        x.fillText(etiket, W / 2, W + ek * 0.40);
+        x.fillStyle = '#e1251b'; x.font = '600 ' + Math.round(W * 0.036) + 'px Montserrat, Arial, sans-serif';
+        x.fillText(alt || 'AUTOMARTASHOW', W / 2, W + ek * 0.76);
+      }
+      return new Promise(function (ok) { c.toBlob(function (b) { ok(b); }, 'image/jpeg', 0.95); });
+    };
+    return (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(bitir);
+  }
+  function indir(ad, veri, tip) {
+    var blob = veri instanceof Blob ? veri : new Blob([veri], { type: tip || 'application/octet-stream' });
+    if (window.AMS_INDIR) return window.AMS_INDIR(ad, blob);
+    var u = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = u; a.download = ad; a.rel = 'noopener';
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(u); a.remove(); }, 4000);
+    return Promise.resolve();
+  }
+  function altEtiket() { return S.cfg.alt ? 'AUTOMARTASHOW · ' + S.cfg.alt : 'AUTOMARTASHOW'; }
+
+  function qrGoster(baslik, metin, ek) {
+    ek = ek || {};
+    var dosya = 'QR-' + dosyaAdi(baslik);
+    ov.innerHTML = '<div class="ov-ic">' + (ek.etiket ? '<p class="ust-etiket">' + esc(ek.etiket) + '</p>' : '') + '<h2>' + esc(baslik) + '</h2>' +
+      '<div class="ov-qr">' + qrSvg(metin) + '</div>' + (ek.not ? '<p class="ov-not">' + ek.not + '</p>' : '') + (ek.ek || '') +
+      '<label class="ov-onay"><input type="checkbox" id="etiketli" checked> İndirirken altına adı yazılsın</label>' +
+      '<div class="ikili"><button class="btn" data-o="svg">SVG İNDİR</button><button class="btn" data-o="jpg">JPG İNDİR</button></div>' +
+      '<button class="btn btn-k" data-o="kapat">KAPAT</button></div>';
+    ov.hidden = false; ov.scrollTop = 0; document.body.classList.add('kilitli');
+    try { if (navigator.wakeLock && !S.wake) navigator.wakeLock.request('screen').then(function (l) { S.wake = l; }).catch(function () {}); } catch (e) { /* yok */ }
+    ov.onclick = function (e) {
+      var b = e.target.closest('[data-o]'); if (!b) return;
+      var o = b.getAttribute('data-o'), et = $('#etiketli') && $('#etiketli').checked ? baslik : '';
+      if (o === 'kapat') return qrKapat();
+      if (o === 'giris') return qrGoster('UYGULAMA GİRİŞİ', ek.girisUrl, { etiket: baslik, not: 'Katılımcı bu kodu telefonunun kamerasıyla okutur. Uygulama açılır, GSM numarası hazır gelir; yalnızca şifreyi yazar.' });
+      if (o === 'svg') indir(dosya + '.svg', qrSvgDosya(metin, et, altEtiket()), 'image/svg+xml');
+      if (o === 'jpg') { mesgul(b, true, 'HAZIRLANIYOR…'); qrJpg(metin, et, altEtiket()).then(function (bl) { mesgul(b, false); return indir(dosya + '.jpg', bl); }); }
+    };
+    var k = ov.querySelector('[data-o="kapat"]'); if (k) k.focus();
+  }
+  function qrKapat() {
+    ov.hidden = true; ov.innerHTML = ''; document.body.classList.remove('kilitli');
+    if (S.wake) { try { S.wake.release(); } catch (e) { /* yok */ } S.wake = null; }
+  }
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !ov.hidden) qrKapat(); });
+  function qrGosterHesap(h) {
+    qrGoster(h.ad, qrMetni(h), { etiket: 'KİŞİSEL QR · ' + h.kat + (h.markaAd ? ' · ' + h.markaAd : ''), not: esc([h.gorev, h.firma].filter(Boolean).join(' · ')) + '<br>' + esc(h.gsm) });
+  }
+
+  /* ------------------------------------------------------------------ dışa aktarma */
+  function csvYap(basliklar, satirlar) {
+    var h = function (v) { v = String(v == null ? '' : v); return /[;"\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+    return '﻿' + [basliklar].concat(satirlar).map(function (r) { return r.map(h).join(';'); }).join('\r\n');
+  }
+  function eslesmeCsv(satirlar, ad) {
+    return indir(ad, csvYap(['TARİH-SAAT', 'ETKİNLİK', 'MARKA', 'OKUTAN', 'OKUTAN KATEGORİ', 'OKUTAN FİRMA', 'OKUTAN GÖREVİ', 'OKUTAN GSM', 'OKUTAN E-MAIL', 'OKUTULAN', 'OKUTULAN KATEGORİ', 'OKUTULAN FİRMA', 'OKUTULAN GÖREVİ', 'OKUTULAN GSM', 'OKUTULAN E-MAIL'],
+      satirlar.map(function (s) { return [tarih(s.t), s.etk, s.marka, s.sad, s.skat, s.sfirma, s.sgorev, s.sgsm, s.semail, s.tad, s.tkat, s.tfirma, s.tgorev, s.tgsm, s.temail]; })), 'text/csv;charset=utf-8');
+  }
+  function standZip(btn) {
+    if (!window.JSZip) return toast('ZIP kütüphanesi yüklenemedi.');
+    var markalar = S.markalar || [];
+    if (!markalar.length) return toast('Henüz marka eklenmedi.');
+    mesgul(btn, true, 'HAZIRLANIYOR…');
+    var zip = new JSZip(), alt = altEtiket(), is = Promise.resolve();
+    zip.file('FUAR-KAYIT-QR.svg', qrSvgDosya(kayitUrl() + '?kayit=1', 'KAYIT OL', alt));
+    zip.file('UYGULAMA-GIRIS-QR.svg', qrSvgDosya(kayitUrl(), 'UYGULAMAYA GİRİŞ', alt));
+    is = is.then(function () { return qrJpg(kayitUrl() + '?kayit=1', 'KAYIT OL', alt); }).then(function (b) { zip.file('FUAR-KAYIT-QR.jpg', b); });
+    markalar.forEach(function (m) {
+      var ad = dosyaAdi(m.ad), metin = qrMetni({ id: m.id, ad: m.ad });
+      zip.file('SVG/' + ad + '.svg', qrSvgDosya(metin, m.ad, alt));
+      is = is.then(function () { return qrJpg(metin, m.ad, alt); }).then(function (b) { zip.file('JPG/' + ad + '.jpg', b); });
+    });
+    is.then(function () { return zip.generateAsync({ type: 'blob' }); })
+      .then(function (b) { mesgul(btn, false); return indir('AUTOMARTASHOW-stant-qr-kodlari.zip', b, 'application/zip'); })
+      .catch(function (e) { mesgul(btn, false); toast((e && e.msg) || 'ZIP hazırlanamadı.'); });
+  }
+
+  /* ------------------------------------------------------------------ eylemler */
+  ACT.git = function (el) { git(el.getAttribute('data-g')); };
+  ACT.cikis = function () { cikis(); };
+  ACT.yenidenDene = function () { yukle(); };
+  ACT.benimQr = function () { qrGosterHesap(S.me); };
+  ACT.kayitQr = function () {
+    qrGoster('FUAR KAYIT QR KODU', kayitUrl() + '?kayit=1', { etiket: altEtiket(), not: 'Bu kodu kayıt masasına koyun. Katılımcı telefonunun kamerasıyla okutunca kayıt sayfası açılır; kaydını bitirdiğinde kişisel QR kodu hemen hazır olur.' + (S.cfg.kendiKayit ? '' : '<br><b style="color:var(--kirmizi)">Kendi kaydı şu an kapalı. AYARLAR > SEÇENEKLER bölümünden açın.</b>') });
+  };
+  ACT.oturumKapat = function (el) {
+    mesgul(el, true, 'KAPATILIYOR…');
+    api('oturumKapat', { sess: S.sess, id: el.getAttribute('data-id') }).then(function () {
+      return kayitlariYukle().then(function () { yerindeCiz(); toast('Oturum kapatıldı. Kişi şimdi kendi telefonundan giriş yapabilir.'); });
+    }).catch(function (e) { mesgul(el, false); hataIsle(e, 'kisi-hata'); });
+  };
+  ACT.sifreSifirla = function (el) {
+    if (el.getAttribute('data-onay') !== '1') { el.setAttribute('data-onay', '1'); el.textContent = 'SIFIRLAMAK İÇİN TEKRAR DOKUNUN'; return; }
+    mesgul(el, true, 'SIFIRLANIYOR…');
+    api('sifreSifirla', { sess: S.sess, id: el.getAttribute('data-id') }).then(function () {
+      return kayitlariYukle().then(function () { yerindeCiz(); toast('Şifre varsayılana döndü.'); });
+    }).catch(function (e) { mesgul(el, false); hataIsle(e, 'kisi-hata'); });
+  };
+  ACT.girisGsm = function (el) { S.u = el.getAttribute('data-gsm') || ''; git('giris'); };
+  ACT.girisQr = function () { qrGoster('UYGULAMA GİRİŞ QR KODU', kayitUrl(), { etiket: altEtiket(), not: 'Kayıtlı katılımcılar bu kodu okutup uygulamayı açar, GSM numarası ve şifreyle giriş yapar.' }); };
+  ACT.girisQrKisi = function (el) {
+    var h = (S.kayitlar || []).filter(function (x) { return x.id === el.getAttribute('data-id'); })[0];
+    if (h) qrGoster('UYGULAMA GİRİŞİ', kayitUrl() + '?u=' + encodeURIComponent(String(h.gsm).replace(/\s/g, '')), { etiket: h.ad, not: 'Bu kod uygulamayı ' + esc(h.ad) + ' için GSM numarası hazır olarak açar.' });
+  };
+  ACT.hesapQr = function (el) { var h = (S.kayitlar || []).filter(function (x) { return x.id === el.getAttribute('data-id'); })[0]; if (h) qrGosterHesap(h); };
+  ACT.markaQr = function (el) {
+    var m = (S.v.liste || []).filter(function (x) { return x.id === el.getAttribute('data-id'); })[0];
+    if (m) qrGoster(m.ad, qrMetni({ id: m.id, ad: m.ad }), { etiket: 'STANT QR KODU', not: 'Müşteri bu kodu kendi telefonuyla okutursa ' + esc(m.ad) + ' ile eşleşir.' });
+  };
+  ACT.kisi = function (el) { git('kisi', { id: el.getAttribute('data-id') }); };
+  ACT.duzelt = function (el) { git('duzelt', { id: el.getAttribute('data-id') }); };
+  ACT.rapor = function (el) { git('rapor', { tip: el.getAttribute('data-tip'), id: el.getAttribute('data-id') || '', sekme: el.getAttribute('data-s') || '' }); };
+  ACT.sekme = function (el) { S.v.sekme = el.getAttribute('data-s'); ciz(); };
+  ACT.suz = function (el) { S.v.f = el.getAttribute('data-f'); ciz(); };
+  ACT.kat = function (el) {
+    var k = el.getAttribute('data-k'), eski = S.v.kat || (S.gorunum === 'kayit' ? '' : KAT.M);
+    if (eski === k) return;
+    formuSakla();
+    if (k === KAT.M && eski && eski !== KAT.M) S.v.firma = '';
+    S.v.kat = k;
+    yerindeCiz();
+    var ilk = $('#ad'); if (ilk && !ilk.value && !$('#marka')) ilk.focus();
+  };
+  ACT.turDegistir = function () { formuSakla(); S.v.kat = ''; yerindeCiz(); };
+  ACT.markaAc = function (el) { $('#yeni-marka').hidden = false; el.hidden = true; $('#yeni-marka-ad').focus(); };
+  ACT.markaHizli = function (el) {
+    var ad = $('#yeni-marka-ad').value.trim();
+    if (ad.length < 2) return $('#yeni-marka-ad').focus();
+    mesgul(el, true, '…');
+    api('markaEkle', { sess: S.sess, adlar: [ad] }).then(function (r) {
+      S.markalar = r.markalar; onbellegeYaz();
+      formuSakla();
+      S.v.marka = r.sonuc[0].id || (S.markalar.filter(function (m) { return katla(m.ad) === katla(ad); })[0] || {}).id;
+      yerindeCiz();
+      toast(r.sonuc[0].durum === 'EKLENDİ' ? r.sonuc[0].ad + ' markası eklendi ve seçildi.' : r.sonuc[0].mesaj);
+    }).catch(function (e) { mesgul(el, false); hataIsle(e, 'k-hata'); });
+  };
+  ACT.yetki = function (el) {
+    var id = el.getAttribute('data-id'), y = el.getAttribute('data-y');
+    mesgul(el, true, '…');
+    api('yetkiDegistir', { sess: S.sess, id: id, yetki: y }).then(function (r) {
+      return kayitlariYukle().then(function () { if (S.gorunum === 'yoneticiler') S.v.ara = ''; ciz(); toast(r.hesap.ad + (y === 'YONETICI' ? ' artık yönetici.' : ' yöneticilikten çıkarıldı.')); });
+    }).catch(function (e) { mesgul(el, false); hataIsle(e, 'kisi-hata'); });
+  };
+  ACT.sil = function (el) {
+    if (el.getAttribute('data-onay') !== '1') { el.setAttribute('data-onay', '1'); el.textContent = 'SİLMEK İÇİN TEKRAR DOKUNUN'; return; }
+    mesgul(el, true, 'SİLİNİYOR…');
+    api('hesapSil', { sess: S.sess, id: el.getAttribute('data-id') }).then(function () {
+      return kayitlariYukle().then(function () { git('kayitlar'); toast('Kayıt silindi. SİLİNEN listesinden geri alabilirsiniz.'); });
+    }).catch(function (e) { mesgul(el, false); hataIsle(e, 'kisi-hata'); });
+  };
+  ACT.geriAl = function (el) {
+    mesgul(el, true, 'GERİ ALINIYOR…');
+    api('hesapGeriAl', { sess: S.sess, id: el.getAttribute('data-id') }).then(function (r) {
+      return kayitlariYukle().then(function () { git('kisi', { id: r.hesap.id }); toast('Kayıt geri alındı.'); });
+    }).catch(function (e) { mesgul(el, false); hataIsle(e, 'kisi-hata'); });
+  };
+  ACT.markaSil = function (el) {
+    if (el.getAttribute('data-onay') !== '1') { el.setAttribute('data-onay', '1'); el.textContent = 'emin misiniz?'; return; }
+    api('markaSil', { sess: S.sess, id: el.getAttribute('data-id') }).then(function (r) { S.markalar = r.markalar; onbellegeYaz(); S.v.liste = null; ciz(); toast('Marka listeden kaldırıldı.'); })
+      .catch(function (e) { hataIsle(e); });
+  };
+  ACT.raporCsv = function () {
+    var d = S.v.veri; if (!d) return;
+    if (S.v._sekme === 'marka') {
+      var mr = S.v.tip === 'marka' ? d : d.marka;
+      return indir(dosyaAdi(mr.marka.ad) + '-stant-eslesmeleri.csv', csvYap(['TARİH-SAAT', 'KİŞİ', 'KATEGORİ', 'FİRMA', 'GÖREVİ', 'GSM', 'E-MAIL', 'MARKA PERSONELİ'],
+        mr.eslesmeler.map(function (r) { return [tarih(r.t), r.ad, r.kat, r.firma, r.gorev, r.gsm, r.email, r.personel]; })), 'text/csv;charset=utf-8');
+    }
+    var sekme = S.v._sekme === 'okutuldu' ? 'okutuldu' : 'okuttu';
+    indir(dosyaAdi(d.hesap.ad) + (sekme === 'okuttu' ? '-okuttuklari' : '-okutanlar') + '.csv', csvYap(['TARİH-SAAT', sekme === 'okuttu' ? 'OKUTULAN' : 'OKUTAN', 'KATEGORİ', 'FİRMA', 'GÖREVİ', 'GSM', 'E-MAIL', 'MARKA'],
+      d[sekme].map(function (r) { return [tarih(r.t), r.ad, r.kat, r.firma, r.gorev, r.gsm, r.email, r.marka]; })), 'text/csv;charset=utf-8');
+  };
+  ACT.eslesmeCsv = function () { eslesmeCsv(eslesmeSuz(), 'AUTOMARTASHOW-eslesmeler' + (S.v.marka ? '-' + dosyaAdi(S.v.marka) : '') + '.csv'); };
+  ACT.eslesmeCsvTum = function (el) {
+    mesgul(el, true, 'HAZIRLANIYOR…');
+    api('eslesmeler', { sess: S.sess }).then(function (r) { mesgul(el, false); return eslesmeCsv(r.satirlar, 'AUTOMARTASHOW-eslesmeler.csv'); }).catch(function (e) { mesgul(el, false); hataIsle(e); });
+  };
+  ACT.kayitCsv = function (el) {
+    mesgul(el, true, 'HAZIRLANIYOR…');
+    kayitlariYukle().then(function (l) {
+      mesgul(el, false);
+      return indir('AUTOMARTASHOW-kayitlar.csv', csvYap(['KATEGORİ', 'MARKA', 'ADI SOYADI', 'FİRMA', 'GÖREVİ', 'GSM', 'E-MAIL', 'YETKİ', 'DURUM', 'KAYIT TARİHİ', 'KAYDEDEN', 'OKUTTUĞU', 'OKUTULDUĞU'],
+        l.map(function (h) { return [h.kat, h.markaAd, h.ad, h.firma, h.gorev, h.gsm, h.email, h.yetki, h.durum, tarih(h.kayit), h.kaydeden, h.okuttu, h.okutuldu]; })), 'text/csv;charset=utf-8');
+    }).catch(function (e) { mesgul(el, false); hataIsle(e); });
+  };
+  ACT.ayarKaydet = function (el) {
+    var g = el.getAttribute('data-grup'), o = {};
+    if (g === 'yazi') { o.ALT_YAZI = $('#a-alt').value; o.FUAR_BILGI = $('#a-fuar').value; }
+    if (g === 'sifre') { o.KULLANICI_SIFRESI = $('#a-ks').value; }
+    if (g === 'okutma') { o.UYGULAMA_ADRESI = $('#a-uygulama').value; o.OKUTMA_SAYFASI = $('#a-okutma').value; }
+    if (g === 'secenek') {
+      ['KENDI_KAYIT', 'YONETICI_DUZENLER', 'KVKK_ONAY'].forEach(function (k) { o[k] = $('#' + k).checked ? 'EVET' : 'HAYIR'; });
+      o.KVKK_METNI = $('#a-kvkk').value; o.TEKRAR_DK = $('#a-tekrar').value;
+    }
+    mesgul(el, true, 'KAYDEDİLİYOR…');
+    api('ayarKaydet', { sess: S.sess, ayarlar: o }).then(function (r) {
+      S.cfg = r.cfg; onbellegeYaz();
+      return api('ayarlariGetir', { sess: S.sess }).then(function (a) { S.v.ayar = a.ayarlar; yerindeCiz(); toast(g === 'sifre' ? 'Varsayılan şifre kaydedildi.' : 'Kaydedildi.'); });
+    }).catch(function (e) { mesgul(el, false); hataIsle(e); });
+  };
+  ACT.zip = function (el) { standZip(el); };
+  ACT.foto = function () { foto.click(); };
+  ACT.simOkut = function () { var s = $('#sim'); if (s && s.value) okutGonder(s.value); };
+  ACT.altDuzenle = function () {
+    var k = $('#altyazi');
+    k.innerHTML = '<input id="alt-girdi" maxlength="60" value="' + esc(S.cfg.alt) + '" aria-label="Logonun altındaki yazı"><button class="kalem" data-x="altKaydet" aria-label="Kaydet" title="Kaydet">' + IKON.tamam + '</button>';
+    var i = $('#alt-girdi'); i.focus(); i.select();
+    i.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); ACT.altKaydet(); } if (e.key === 'Escape') ciz(); });
+  };
+  ACT.altKaydet = function () {
+    var i = $('#alt-girdi');
+    api('ayarKaydet', { sess: S.sess, ayarlar: { ALT_YAZI: i ? i.value : S.cfg.alt } }).then(function (r) { S.cfg = r.cfg; onbellegeYaz(); ciz(); toast('Yazı güncellendi.'); }).catch(function (e) { hataIsle(e); });
+  };
+  ACT.logoYukle = function (el) { logoTur = el.getAttribute('data-t'); logoDosya.multiple = logoTur === 'SPONSOR'; logoDosya.click(); };
+  ACT.logoSil = function (el) {
+    if (el.getAttribute('data-onay') !== '1') { el.setAttribute('data-onay', '1'); el.textContent = 'EMİN MİSİNİZ?'; return; }
+    mesgul(el, true, 'SİLİNİYOR…');
+    api('logoSil', { sess: S.sess, id: el.getAttribute('data-id') }).then(function (r) { S.logolar = r.logolar; S.logoSurum = r.logoSurum; onbellegeYaz(); yerindeCiz(); toast('Logo kaldırıldı.'); })
+      .catch(function (e) { mesgul(el, false); hataIsle(e); });
+  };
+
+  /* ------------------------------------------------------------------ açılış */
+  function konum(cb) {
+    if (UZAK) {
+      var o = {};
+      try { new URLSearchParams(location.search).forEach(function (v, k) { o[k] = v; }); } catch (e) { /* eski tarayıcı */ }
+      // Okutma bağlantısı (?q=) işlendikten sonra adresten silinir; sayfa yenilenince aynı okutma yeniden gönderilmez
+      if (o.q) { try { history.replaceState(null, '', location.pathname); } catch (e) { /* yok */ } }
+      return cb(o);
+    }
+    try { google.script.url.getLocation(function (l) { cb((l && l.parameter) || {}); }); }
+    catch (e) { cb({}); }
+  }
+  function yukle() {
+    if (S.q) S.kayitModu = false;
+    if (S.q) git('yukle', { metin: S.me ? 'QR kaydediliyor…' : 'Yükleniyor…' }, true);
+    else if (S.me) git('ana', null, true);
+    else if (S.kayitModu) git('kayit', null, true);
+    else if (onbellek) git('giris', null, true);
+    else git('yukle', null, true);
+    api('init', { sess: S.sess, q: S.q, logoSurum: S.logoSurum }).then(function (r) {
+      S.url = r.url || S.url; S.exec = r.exec || S.exec; S.cfg = r.cfg; S.markalar = r.markalar || [];
+      if (r.logolar) { S.logolar = r.logolar; S.logoSurum = r.logoSurum; }
+      onbellegeYaz();
+      if (r.oturumGecersiz) { yerelCikis(); toast(r.oturumMesaj || 'Oturumunuz kapanmış. Lütfen tekrar giriş yapın.'); }
+      if (r.me) benAyarla(r.me);
+      S.hedef = r.hedef || null;
+      if (r.okutma) { kuyrukGonder(); return sonucGoster(r.okutma); }
+      kuyrukGonder();
+      if (S.kayitModu && S.me) { S.kayitModu = false; toast('Bu telefonda zaten hesabınız açık. Kişisel QR kodunuz ana sayfanızda.'); }
+      if (S.gorunum === 'kayit') { formuSakla(); if (S.me) git('ana', null, true); else yerindeCiz(); return; }
+      if (S.kayitModu && S.gorunum === 'yukle') return git('kayit', null, true);
+      // Kullanıcı giriş formuna yazmaya başladıysa ya da giriş isteği gönderdiyse ekran yeniden çizilmez
+      var yaziyor = S.gorunum === 'giris' && (S.girisBekliyor || ($('#deger') && $('#deger').value && !S.u) || ($('#sifre') && $('#sifre').value));
+      if (['yukle', 'giris', 'ana'].indexOf(S.gorunum) >= 0 && !yaziyor) git(S.me ? 'ana' : 'giris', S.gorunum === 'ana' ? S.v : null, true);
+    }).catch(function (e) {
+      if (S.gorunum === 'yukle') git('yukle', { hata: true, metin: e.msg || 'Bağlantı kurulamadı.' }, true);
+      else toast(e.msg || 'Bağlantı kurulamadı.');
+    });
+  }
+
+  window.AMS = { oturumAc: oturumAc, git: git, cikis: function () { return cikis(true); }, yerelCikis: yerelCikis, yukle: yukle, durum: S };
+  konum(function (p) { S.q = p.q || ''; S.u = p.u || ''; S.kayitModu = p.kayit !== undefined && !S.q; yukle(); });
+})();
+</script>
+
 </body>
 </html>

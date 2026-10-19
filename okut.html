@@ -138,8 +138,11 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 <script>
 (function () {
   'use strict';
-  var VARSAYILAN_UYGULAMA = 'https://script.google.com/macros/s/AKfycbzxOrd5LurVGHGyjJSC4oZNtoDEttHUmoZmUHVVjV_TiAyUf5rA-7tfAvRx2fPKPA/exec';
+  var VARSAYILAN_UYGULAMA = 'https://script.google.com/macros/s/AKfycbzxOrd5LurVGHGyjJSC4oZNtoDEttHUmoZmUHVVjV_TiAyUf5rA-7tfAvRx2fPKPA/exec'; // sunucu: Apps Script web uygulaması
   var UYGULAMA_DESENI = /^https:\/\/script\.google\.com\/(a\/[^\/?#]+\/)?macros\/s\/[\w-]+\/(exec|dev)$/;
+  // GitHub'da uygulama bu sayfayla aynı klasörde durur; dönüş oraya yapılır
+  var VARSAYILAN_DONUS = /\.github\.io$/.test(location.hostname) ? new URL('./', location.href).href : VARSAYILAN_UYGULAMA;
+  function ayniSite(u) { try { var a = new URL(u, location.href); return a.protocol === 'https:' && a.origin === location.origin; } catch (e) { return false; } }
   var ANAHTAR = 'amsokut.v1';
 
   var $ = function (s) { return document.querySelector(s); };
@@ -161,14 +164,16 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
     if (!h) return null;
     h.split('&').forEach(function (p) { var i = p.indexOf('='); if (i > 0) { try { o[p.slice(0, i)] = decodeURIComponent(p.slice(i + 1)); } catch (e) { /* bozuk */ } } });
     if (!o.i || !o.k) return null;
-    return { u: o.u, sess: { id: o.i, key: o.k }, ad: o.a || '', marka: o.m || '', kat: o.t || '', alt: o.y || '' };
+    return { u: o.u, x: o.x, sess: { id: o.i, key: o.k }, ad: o.a || '', marka: o.m || '', kat: o.t || '', alt: o.y || '' };
   }
   var gelen = hashOku();
   if (location.hash) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* eski tarayıcı */ } }
   if (gelen) depo.koy('oturum', gelen);
   var O = gelen || depo.al('oturum');
-  var uygulama = O && UYGULAMA_DESENI.test(O.u || '') ? O.u : VARSAYILAN_UYGULAMA;
-  if (O) O.u = uygulama;
+  // Kayıtlar yalnızca Apps Script adresine gönderilir (x, eski sürümlerde u); "UYGULAMAYA DÖN" uygulamanın adresine (u) döner
+  var sunucu = O && UYGULAMA_DESENI.test(O.x || '') ? O.x : O && UYGULAMA_DESENI.test(O.u || '') ? O.u : VARSAYILAN_UYGULAMA;
+  var uygulama = O && O.u && (UYGULAMA_DESENI.test(O.u) || ayniSite(O.u)) ? O.u : VARSAYILAN_DONUS;
+  if (O) { O.u = sunucu; O.d = uygulama; }
   $('#donus').href = uygulama;
 
   function kimYaz() {
@@ -257,7 +262,8 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
     durumYaz(O && O.marka && O.kat === 'MARKA TEMSİLCİSİ' ? 'Hazır. Okuttuğunuz herkes ' + O.marka + ' ile eşleşir.' : 'Hazır. QR kodu çerçeveye getirin.');
   }
 
-  function titret(d) { try { if (navigator.vibrate) navigator.vibrate(d === 'TAMAM' ? 70 : [60, 60, 60]); } catch (e) { /* yok */ } }
+  // Tarayıcı, sayfaya hiç dokunulmadan titreşime izin vermez (uyarı yazar); dokunulana kadar denenmez
+  function titret(d) { try { if (navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive)) navigator.vibrate(d === 'TAMAM' ? 70 : [60, 60, 60]); } catch (e) { /* yok */ } }
   var ses = null;
   function bip(iyi) {
     try {
@@ -279,7 +285,7 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
     sonMetin = metin; sonZaman = simdi;
     var q = qrCoz(metin);
     if (!q) {
-      var uyg = /^https:\/\/script\.google\.com\//.test(String(metin)) && String(metin).indexOf('macros/s/') > 0;
+      var uyg = (/^https:\/\/script\.google\.com\//.test(String(metin)) && String(metin).indexOf('macros/s/') > 0) || (/^https:\/\//.test(String(metin)) && (ayniSite(metin) || String(metin).indexOf(uygulama.split(/[?#]/)[0]) === 0));
       bip(false); titret('HATA');
       return kartGoster({ durum: 'GECERSIZ', mesaj: uyg ? 'Bu, uygulamanın giriş ya da kayıt QR kodu. Katılımcının kişisel QR kodunu okutun.' : 'Bu QR kodu bir AUTOMARTASHOW kodu değil.' });
     }

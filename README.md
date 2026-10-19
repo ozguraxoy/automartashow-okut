@@ -1,13 +1,17 @@
-# AUTOMARTASHOW · Canlı QR okutma sayfası
+# AUTOMARTASHOW · Katılımcı kayıt ve QR eşleşme uygulaması
 
-Martaş Otomotiv AUTOMARTASHOW 2026 katılımcı kayıt uygulamasının canlı kamera ile QR okutma sayfası.
+Martaş Otomotiv AUTOMARTASHOW 2026 uygulamasının ekranları. Veriler Martaş'ın Google E-Tablo'sunda tutulur; sunucu tarafı aynı e-tabloya bağlı Google Apps Script'tir.
 
-Google, Apps Script uygulamalarının içinde canlı kameraya izin vermediği için okutma ekranı burada, GitHub Pages üzerinde çalışır:
-**https://ozguraxoy.github.io/automartashow-okut/okut.html**
+- **Uygulama:** https://ozguraxoy.github.io/automartashow-okut/
+- **Fuar kayıt bağlantısı:** https://ozguraxoy.github.io/automartashow-okut/?kayit
+- **Canlı QR okutma:** https://ozguraxoy.github.io/automartashow-okut/okut.html
 
-- Uygulamadaki **QR OKUT** düğmesi bu sayfayı oturum bilgisiyle açar (adresin `#` kısmında; bu kısım hiçbir sunucuya gönderilmez).
-- Kamera sürekli tarar; QR kod görülür görülmez uygulamanın sunucusuna gönderilir ve eşleşme Google E-Tablo'ya kaydedilir.
-- İnternet kesilirse okutmalar telefonda bekletilir, bağlantı gelince gönderilir.
-- Sayfa yalnızca uygulamanın kendi adresine (script.google.com/macros/s/…/exec) istek gönderir.
+Neden Google adresinde değil: Google, Apps Script sayfalarını kendi çerçevesinin içinde açar. iPhone Safari bu çerçevedeki
+oturum bilgisini Safari kapanınca siler, canlı kamera bu çerçevede çalışmaz ve sayfanın üstünde Google uyarı şeridi çıkar.
+Burada uygulama kendi adresinde çalışır; sunucuya Apps Script'in `doPost` kapısından bağlanır (`{fn, arg}` isteği,
+yalnızca uygulamanın kullandığı işlevler açıktır ve her biri kendi oturum ve yetki kontrolünü yapar).
 
-Sayfa `gh-pages` dalından yayınlanır; `okut.html` güncellendiğinde değişiklik `main` ve `gh-pages` dallarının ikisine de gönderilir.
+Eski Google bağlantısı ve basılı QR kodları çalışmaya devam eder: açan kişi bu adrese aktarılır
+(e-tablodaki AYARLAR > `UYGULAMA_ADRESI`; boşaltılırsa uygulama eskisi gibi Google adresinde açılır).
+
+Sayfalar `gh-pages` dalından yayınlanır; değişiklikler `main` ve `gh-pages` dallarının ikisine de gönderilir.
