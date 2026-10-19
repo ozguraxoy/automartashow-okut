@@ -1311,7 +1311,7 @@ button.satir:hover{background:var(--zemin)}
       sw('YONETICI_DUZENLER', 'Yöneticiler kayıt düzeltebilir', 'Yazım hatalarını düzeltmek için. Silme her durumda yalnızca ana hesaptadır.') +
       sw('KVKK_ONAY', 'Kayıtta KVKK onay kutusu', 'İşaretlenmeden kayıt yapılamaz.') +
       '<label class="alan" for="a-kvkk"><span>KVKK ONAY METNİ</span><textarea id="a-kvkk" maxlength="600" style="min-height:90px">' + esc(a.KVKK_METNI) + '</textarea></label>' +
-      '<label class="alan" for="a-tekrar"><span>TEKRAR OKUTMA SÜRESİ (DAKİKA)</span><input id="a-tekrar" type="number" min="0" max="360" inputmode="numeric" value="' + esc(a.TEKRAR_DK) + '"></label>' +
+      '<p class="not sol">Aynı eşleşme bir kez kaydedilir: bir kişi aynı markanın QR kodunu (ya da marka personeli aynı kişinin kodunu) kaç kez okutursa okutsun tek satır yazılır.</p>' +
       '<button class="btn btn-s" data-x="ayarKaydet" data-grup="secenek">SEÇENEKLERİ KAYDET</button></section>' +
       '<section class="kutu"><h3>ADRESLER</h3>' +
       '<label class="alan" for="a-uygulama"><span>UYGULAMA ADRESİ</span><input id="a-uygulama" type="url" inputmode="url" placeholder="https://…" autocomplete="off" spellcheck="false" value="' + esc(a.UYGULAMA_ADRESI || '') + '"></label>' +
@@ -1616,7 +1616,7 @@ button.satir:hover{background:var(--zemin)}
     if (g === 'okutma') { o.UYGULAMA_ADRESI = $('#a-uygulama').value; o.OKUTMA_SAYFASI = $('#a-okutma').value; }
     if (g === 'secenek') {
       ['KENDI_KAYIT', 'YONETICI_DUZENLER', 'KVKK_ONAY'].forEach(function (k) { o[k] = $('#' + k).checked ? 'EVET' : 'HAYIR'; });
-      o.KVKK_METNI = $('#a-kvkk').value; o.TEKRAR_DK = $('#a-tekrar').value;
+      o.KVKK_METNI = $('#a-kvkk').value;
     }
     mesgul(el, true, 'KAYDEDİLİYOR…');
     api('ayarKaydet', { sess: S.sess, ayarlar: o }).then(function (r) {
