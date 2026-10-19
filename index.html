@@ -5,7 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
 <meta name="robots" content="noindex,nofollow">
-<meta name="apple-mobile-web-app-title" content="AUTOMARTASHOW">
+<meta name="apple-mobile-web-app-title" content="AutoMartaShow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<script>(function(){var u=navigator.userAgent||"";if(/iPhone|iPad|iPod/.test(u)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1))return;var l=document.createElement("link");l.rel="manifest";l.href="manifest.webmanifest";document.head.appendChild(l);})();</script>
 <meta name="description" content="AUTOMARTASHOW katılımcı kayıt ve QR eşleşme uygulaması · Martaş Otomotiv">
 <link rel="icon" href="ikon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="ikon-180.png">
@@ -87,6 +91,7 @@ a{color:inherit}
 .btn:hover{background:var(--zemin)}
 .btn:active{transform:translateY(1px)}
 .btn svg{width:18px;height:18px;flex:none}
+.btn .btn-ikon{width:24px;height:24px;border-radius:6px;flex:none}
 .btn-k{background:var(--kirmizi);border-color:var(--kirmizi);color:var(--kagit)}
 .btn-k:hover{background:var(--kirmizi-koyu);border-color:var(--kirmizi-koyu)}
 .btn-s{background:var(--murekkep);color:var(--kagit)}
@@ -268,6 +273,16 @@ button.satir:hover{background:var(--zemin)}
 .ov-qr svg{width:100%;height:auto;display:block}
 .ov-not{margin:0;font:500 13px/1.55 var(--font);color:var(--gri)}
 .ov-not b{color:var(--murekkep)}
+/* Ana ekrana ekle rehberi */
+.ks-ikon{display:flex;flex-direction:column;align-items:center;gap:7px;align-self:center}
+.ks-ikon img{width:76px;height:76px;border-radius:18px;box-shadow:0 2px 12px rgba(21,19,20,.2)}
+.ks-ikon span{font:600 12px var(--font)}
+.ks-adim{list-style:none;margin:0;padding:0;text-align:left;counter-reset:a}
+.ks-adim li{counter-increment:a;display:flex;align-items:center;gap:12px;padding:12px 2px;border-top:1px solid var(--cizgi);font:500 14px/1.45 var(--font)}
+.ks-adim li:last-child{border-bottom:1px solid var(--cizgi)}
+.ks-adim li::before{content:counter(a);flex:0 0 26px;height:26px;border-radius:50%;background:var(--murekkep);color:var(--kagit);font:800 13px/26px var(--font);text-align:center}
+.ks-adim b{font-weight:700}
+.ks-simge{display:inline-block;width:20px;height:20px;vertical-align:-4px;color:#007aff}
 .ov-onay{display:flex;justify-content:center;gap:8px;align-items:center;font:600 12.5px var(--font);cursor:pointer}
 .ov-onay input{width:18px;height:18px;accent-color:var(--kirmizi)}
 .giris-bilgi{display:inline-grid;grid-template-columns:auto auto;gap:4px 12px;margin:0 auto 6px;padding:10px 16px;border:2px dashed var(--kirmizi);text-align:left;font:600 13px var(--font);color:var(--murekkep)}
@@ -671,7 +686,9 @@ button.satir:hover{background:var(--zemin)}
     qrGoster(h.ad, qrMetni(h), {
       etiket: 'KAYDINIZ TAMAMLANDI',
       not: 'Bu sizin kişisel QR kodunuz; ana sayfanızda da durur. Stantlarda marka personeline gösterin.<br><br>' +
-        '<span class="giris-bilgi"><span>GSM</span><b>' + esc(h.gsm) + '</b><span>Şifre</span><b>' + esc(sifre || '1234') + '</b></span><br>Çıkış yaparsanız bu bilgilerle tekrar girersiniz.'
+        '<span class="giris-bilgi"><span>GSM</span><b>' + esc(h.gsm) + '</b><span>Şifre</span><b>' + esc(sifre || '1234') + '</b></span><br>Çıkış yaparsanız bu bilgilerle tekrar girersiniz.' +
+        (kisayolVar() ? '<br><br><b>Ana ekrana ekleyin:</b> uygulamayı ana ekrandaki M simgesinden açtığınızda hesabınız hep açık gelir.' : ''),
+      ek: kisayolVar() ? '<button class="btn btn-s" data-o="kisayol">' + KISAYOL_IKON + 'ANA EKRANA EKLE</button>' : ''
     });
   }
 
@@ -734,7 +751,8 @@ button.satir:hover{background:var(--zemin)}
       (m.kat === KAT.T ? 'MÜŞTERİ QR KODLARINI OKUTARAK EŞLEŞME KAYDEDİN' : 'STANTTAKİ MARKA PERSONELİNE GÖSTERİN') + '</span></button>' +
       '<button class="btn btn-k btn-b" data-x="okutAc">' + IKON.kamera + 'QR OKUT</button>' +
       (m.kat === KAT.T && m.markaAd ? '<button class="btn" data-x="rapor" data-tip="ben" data-s="marka">' + esc(m.markaAd) + ' STAND RAPORU</button>' : '') +
-      '<button class="btn" data-x="rapor" data-tip="ben" data-s="okuttu">EŞLEŞMELERİM</button>';
+      '<button class="btn" data-x="rapor" data-tip="ben" data-s="okuttu">EŞLEŞMELERİM</button>' +
+      (kisayolVar() && !depo.al('ams3.kisayol') ? '<button class="btn" data-x="anaEkranaEkle">' + KISAYOL_IKON + 'ANA EKRANA EKLE</button>' : '');
     if (yon()) {
       h += '<div class="ayrac">' + (ana() ? 'ANA HESAP YÖNETİMİ' : 'YÖNETİCİ') + '</div>' +
         (m.sifreVarsayilan ? '<div class="bant-bilgi bant-kuyruk">Şifreniz hâlâ herkesin kullandığı varsayılan şifre. Hesabınızı korumak için <button class="link" data-x="git" data-g="sifre" style="padding:0">şifrenizi değiştirin</button>.</div>' : '') +
@@ -746,9 +764,72 @@ button.satir:hover{background:var(--zemin)}
           : '<div class="ikili"><button class="btn" data-x="git" data-g="markalar">MARKALAR</button><button class="btn" data-x="git" data-g="ozet">KAYIT DURUMU</button></div>' +
           '<div class="ikili"><button class="btn btn-s" data-x="kayitQr">' + IKON.qr + 'FUAR KAYIT QR</button><button class="btn" data-x="git" data-g="sifre">ŞİFREMİ DEĞİŞTİR</button></div>');
     }
+    if (kisayolVar() && depo.al('ams3.kisayol')) h += '<button class="btn-ince" data-x="anaEkranaEkle">Ana ekrana ekle</button>';
     h += '<button class="btn-ince" data-x="cikis">Çıkış yap</button>';
     return sayfa(h, true);
   };
+
+  /* ------------------------------------------------------------------ ana ekrana ekle
+     Telefonda tarayıcıdan açıkken uygulama ana ekrana eklenebilir (Martaş M simgesi). iPhone'da ana ekrandaki uygulama
+     Safari'den ayrı bir depolama kullanır; bu yüzden kısayolun adresine oturum anahtarı (?s=) yazılır ve yalnızca uygulama
+     ana ekrandan açıldığında kullanılır. Android Chrome'da depolama ortaktır; mümkünse Chrome'un kendi yükleme penceresi açılır.
+     Hiçbir tarayıcı bir sitenin kendi kendine ana ekrana eklenmesine izin vermez; iPhone'da kişi Paylaş > Ana Ekrana Ekle'ye dokunur. */
+  var CIHAZ = (function () {
+    var ua = navigator.userAgent || '', ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    return { ios: ios, android: /Android/i.test(ua), iosBaska: ios && /CriOS|FxiOS|EdgiOS|OPiOS/.test(ua) };
+  })();
+  var KISAYOL_IKON = '<img class="btn-ikon" src="ikon-180.png" alt="" aria-hidden="true">';
+  var PAYLAS_IKON = '<svg class="ks-simge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Paylaş simgesi"><path d="M8 9H6.5A1.5 1.5 0 0 0 5 10.5v9A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 17.5 9H16"/><path d="M12 14V3M8.5 6.5 12 3l3.5 3.5"/></svg>';
+  function ekranUygulamasi() {
+    try { return navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches || window.matchMedia('(display-mode: fullscreen)').matches; }
+    catch (e) { return false; }
+  }
+  function kisayolVar() { return !!UZAK && (CIHAZ.ios || CIHAZ.android) && !ekranUygulamasi() && !!S.sess; }
+  var kurulumIstegi = null;
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); kurulumIstegi = e; });
+  window.addEventListener('appinstalled', function () { kurulumIstegi = null; depo.koy('ams3.kisayol', 1); if (S.gorunum === 'ana' && ov.hidden) yerindeCiz(); });
+  function kisayolAdresiniSil() {
+    try { if (/[?&]s=/.test(location.search)) history.replaceState(history.state, '', location.pathname); } catch (e) { /* yok */ }
+  }
+  ACT.anaEkranaEkle = function () {
+    if (!S.sess) return;
+    if (kurulumIstegi) {
+      var k = kurulumIstegi; kurulumIstegi = null;
+      try {
+        k.prompt();
+        Promise.resolve(k.userChoice).then(function (c) {
+          if (c && c.outcome === 'accepted') { depo.koy('ams3.kisayol', 1); toast('AUTOMARTASHOW ana ekranınıza ekleniyor.'); qrKapat(); }
+          if (S.gorunum === 'ana' && ov.hidden) yerindeCiz();
+        });
+        return;
+      } catch (e) { /* tarayıcı izin vermedi: adımları göster */ }
+    }
+    kisayolRehberi();
+  };
+  function kisayolRehberi() {
+    // iPhone: eklenecek kısayolun adresi oturum anahtarını taşır; rehber kapanınca adresten silinir
+    if (CIHAZ.ios) { try { history.replaceState(history.state, '', location.pathname + '?s=' + encodeURIComponent(S.sess.id + '.' + S.sess.key)); } catch (e) { /* yok */ } }
+    var adimlar = CIHAZ.ios ? (CIHAZ.iosBaska
+      ? ['Adres çubuğundaki <b>Paylaş</b> ' + PAYLAS_IKON + ' simgesine dokunun.', 'Listeden <b>Ana Ekrana Ekle</b>\'yi seçin.', 'Sağ üstteki <b>Ekle</b>\'ye dokunun.']
+      : ['Safari\'de <b>Paylaş</b> ' + PAYLAS_IKON + ' simgesine dokunun. Görmüyorsanız önce <b>•••</b> simgesine dokunun.', 'Listeyi kaydırıp <b>Ana Ekrana Ekle</b>\'yi seçin.', 'Sağ üstteki <b>Ekle</b>\'ye dokunun.'])
+      : ['Chrome\'da sağ üstteki <b>⋮</b> menüsüne dokunun.', '<b>Ana ekrana ekle</b> ya da <b>Uygulamayı yükle</b>\'yi seçin.', '<b>Ekle</b> ya da <b>Yükle</b>\'ye dokunun.'];
+    ov.innerHTML = '<div class="ov-ic ks"><p class="ust-etiket">ANA EKRANA EKLE</p>' +
+      '<div class="ks-ikon"><img src="ikon-180.png" alt="Martaş M simgesi" width="76" height="76"><span>AutoMartaShow</span></div>' +
+      '<h2>Hesabınız tek dokunuşla açılsın</h2>' +
+      '<p class="ov-not">Uygulamayı ana ekranınızdaki <b>M</b> simgesinden açtığınızda hesabınız açık gelir; tarayıcıyı kapatsanız da çıkış yapmazsınız.</p>' +
+      '<ol class="ks-adim">' + adimlar.map(function (a) { return '<li><span>' + a + '</span></li>'; }).join('') + '</ol>' +
+      '<button class="btn btn-k" data-o="ekledim">EKLEDİM</button><button class="btn" data-o="kapat">DAHA SONRA</button></div>';
+    ov.hidden = false; ov.scrollTop = 0; document.body.classList.add('kilitli');
+    ov.onclick = function (e) {
+      var b = e.target.closest('[data-o]'); if (!b) return;
+      var o = b.getAttribute('data-o');
+      if (o !== 'ekledim' && o !== 'kapat') return;
+      if (o === 'ekledim') { depo.koy('ams3.kisayol', 1); toast('Bundan sonra uygulamayı ana ekrandaki M simgesinden açın.'); }
+      qrKapat();
+      if (S.gorunum === 'ana') yerindeCiz();
+    };
+    var k = ov.querySelector('[data-o="ekledim"]'); if (k) k.focus();
+  }
 
   /* ------------------------------------------------------------------ QR okutma */
   V.okut = function () {
@@ -1374,6 +1455,7 @@ button.satir:hover{background:var(--zemin)}
       var b = e.target.closest('[data-o]'); if (!b) return;
       var o = b.getAttribute('data-o'), et = $('#etiketli') && $('#etiketli').checked ? baslik : '';
       if (o === 'kapat') return qrKapat();
+      if (o === 'kisayol') return ACT.anaEkranaEkle();
       if (o === 'giris') return qrGoster('UYGULAMA GİRİŞİ', ek.girisUrl, { etiket: baslik, not: 'Katılımcı bu kodu telefonunun kamerasıyla okutur. Uygulama açılır, GSM numarası hazır gelir; yalnızca şifreyi yazar.' });
       if (o === 'svg') indir(dosya + '.svg', qrSvgDosya(metin, et, altEtiket()), 'image/svg+xml');
       if (o === 'jpg') { mesgul(b, true, 'HAZIRLANIYOR…'); qrJpg(metin, et, altEtiket()).then(function (bl) { mesgul(b, false); return indir(dosya + '.jpg', bl); }); }
@@ -1382,6 +1464,7 @@ button.satir:hover{background:var(--zemin)}
   }
   function qrKapat() {
     ov.hidden = true; ov.innerHTML = ''; document.body.classList.remove('kilitli');
+    kisayolAdresiniSil();
     if (S.wake) { try { S.wake.release(); } catch (e) { /* yok */ } S.wake = null; }
   }
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !ov.hidden) qrKapat(); });
@@ -1567,8 +1650,16 @@ button.satir:hover{background:var(--zemin)}
     if (UZAK) {
       var o = {};
       try { new URLSearchParams(location.search).forEach(function (v, k) { o[k] = v; }); } catch (e) { /* eski tarayıcı */ }
-      // Okutma bağlantısı (?q=) işlendikten sonra adresten silinir; sayfa yenilenince aynı okutma yeniden gönderilmez
-      if (o.q) { try { history.replaceState(null, '', location.pathname); } catch (e) { /* yok */ } }
+      // Ana ekran kısayolu (?s=kimlik.anahtar): yalnızca ana ekrandan açılan uygulamada ve telefonda oturum yokken kullanılır
+      if (o.s) {
+        var par = String(o.s).split('.');
+        if (ekranUygulamasi() && !S.sess && par.length === 2 && /^[KM][0-9A-Z]{4,20}$/.test(par[0]) && /^[\w-]{8,80}$/.test(par[1])) {
+          S.sess = { id: par[0], key: par[1] }; S.me = null; depo.koy('ams3.oturum', S.sess);
+        }
+        delete o.s;
+      }
+      // Okutma bağlantısı (?q=) ve kısayol anahtarı işlendikten sonra adresten silinir; sayfa yenilenince tekrar kullanılmaz
+      if (o.q || /[?&]s=/.test(location.search)) { try { history.replaceState(null, '', location.pathname); } catch (e) { /* yok */ } }
       return cb(o);
     }
     try { google.script.url.getLocation(function (l) { cb((l && l.parameter) || {}); }); }
@@ -1579,6 +1670,7 @@ button.satir:hover{background:var(--zemin)}
     if (S.q) git('yukle', { metin: S.me ? 'QR kaydediliyor…' : 'Yükleniyor…' }, true);
     else if (S.me) git('ana', null, true);
     else if (S.kayitModu) git('kayit', null, true);
+    else if (S.sess) git('yukle', { metin: 'Hesabınız açılıyor…' }, true);
     else if (onbellek) git('giris', null, true);
     else git('yukle', null, true);
     api('init', { sess: S.sess, q: S.q, logoSurum: S.logoSurum }).then(function (r) {
@@ -1602,6 +1694,8 @@ button.satir:hover{background:var(--zemin)}
     });
   }
 
+  // GitHub adresinde: uygulama internet yokken de açılsın (sw.js); Google adresinde kullanılmaz
+  if (UZAK && 'serviceWorker' in navigator) { try { navigator.serviceWorker.register('sw.js').catch(function () { /* desteklenmiyor */ }); } catch (e) { /* yok */ } }
   window.AMS = { oturumAc: oturumAc, git: git, cikis: function () { return cikis(true); }, yerelCikis: yerelCikis, yukle: yukle, durum: S };
   konum(function (p) { S.q = p.q || ''; S.u = p.u || ''; S.kayitModu = p.kayit !== undefined && !S.q; yukle(); });
 })();

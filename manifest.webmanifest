@@ -1,0 +1,17 @@
+{
+  "id": "./",
+  "name": "AUTOMARTASHOW",
+  "short_name": "AutoMartaShow",
+  "description": "AUTOMARTASHOW katılımcı kayıt ve QR eşleşme uygulaması · Martaş Otomotiv",
+  "lang": "tr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    { "src": "ikon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "ikon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "ikon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
