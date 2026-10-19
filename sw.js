@@ -3,10 +3,10 @@
  * Böylece fuar alanında çekim zayıfken de uygulama açılır, kişisel QR kod görünür, okutmalar telefonda sıraya alınır.
  * Sunucuya giden istekler (Google Apps Script) ve POST'lar hiç ele alınmaz; tarayıcı onları doğrudan gönderir. */
 'use strict';
-var SURUM = 'ams-1e7f8d9a3d';
+var SURUM = 'ams-0b918d0aad';
 var KOK = new URL('./', self.location.href).href;
 var SAYFALAR = [KOK, KOK + 'okut.html'];
-var DOSYALAR = ['ikon.svg', 'ikon-180.png', 'ikon-192.png', 'ikon-512.png', 'ikon-maskable-512.png', 'manifest.webmanifest'].map(function (f) { return KOK + f; });
+var DOSYALAR = ['ikon-32.png', 'ikon-180.png', 'ikon-192.png', 'ikon-512.png', 'ikon-maskable-512.png', 'manifest.webmanifest'].map(function (f) { return KOK + f; });
 var KUTUPHANELER = [
   'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js',
