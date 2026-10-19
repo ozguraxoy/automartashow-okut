@@ -598,9 +598,8 @@ button.satir:hover{background:var(--zemin)}
   function kayitTuruSecimi() {
     var sec = function (k, t, a) { return '<button type="button" class="secenek" data-x="kat" data-k="' + k + '"><span><b>' + t + '</b><small>' + a + '</small></span><i aria-hidden="true">›</i></button>'; };
     return '<div class="form" id="tur-secimi"><h2 class="baslik">KAYIT TÜRÜNÜZÜ SEÇİN</h2><div class="secenekler" role="group" aria-label="Kayıt türü">' +
-      sec(KAT.T, 'MARKA TEMSİLCİLERİ', 'Fuardaki markaların stant personeli') +
-      sec(KAT.M, 'MÜŞTERİ', 'Bayi, servis, tamirci') +
-      sec(KAT.C, 'MARTAŞ OTOMOTİV', 'Martaş çalışanları') + '</div></div>';
+      sec(KAT.T, 'MARKA TEMSİLCİLERİ', 'Fuardaki markaların stant personeli (Martaş Otomotiv dahil)') +
+      sec(KAT.M, 'MÜŞTERİ', 'Bayi, servis, tamirci') + '</div></div>';
   }
   function formDegerleri(h) {
     var d = function (id) { var e = $('#' + id); return e ? e.value : ''; };
