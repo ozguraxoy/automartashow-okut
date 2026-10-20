@@ -749,7 +749,6 @@ button.satir:hover{background:var(--zemin)}
       '<button class="qrkutu" data-x="benimQr" aria-label="QR kodunuzu tam ekran açın">' + qrSvg(qrMetni(m)) + '<span>KİŞİSEL QR KODUNUZ<br>' +
       (m.kat === KAT.T ? 'MÜŞTERİ QR KODLARINI OKUTARAK EŞLEŞME KAYDEDİN' : 'STANTTAKİ MARKA PERSONELİNE GÖSTERİN') + '</span></button>' +
       '<button class="btn btn-k btn-b" data-x="okutAc">' + IKON.kamera + 'QR OKUT</button>' +
-      (m.kat === KAT.T && m.markaAd ? '<button class="btn" data-x="rapor" data-tip="ben" data-s="marka">' + esc(m.markaAd) + ' STAND RAPORU</button>' : '') +
       '<button class="btn" data-x="rapor" data-tip="ben" data-s="okuttu">EŞLEŞMELERİM</button>' +
       (kisayolVar() && !depo.al('ams3.kisayol') ? '<button class="btn" data-x="anaEkranaEkle">' + KISAYOL_IKON + 'ANA EKRANA EKLE</button>' : '');
     if (yon()) {
@@ -1006,14 +1005,12 @@ button.satir:hover{background:var(--zemin)}
     } else {
       var h = d ? d.hesap : (tip === 'ben' ? S.me : (S.kayitlar || []).filter(function (x) { return x.id === v.id; })[0]);
       baslik = h ? h.ad : ''; alt = h ? [h.gorev, h.firma].filter(Boolean).join(' · ') : '';
-      var temsilci = d ? !!d.marka : (tip === 'ben' && S.me && S.me.kat === KAT.T);
-      if (temsilci) sekmeler.push(['marka', (d ? d.marka.marka.ad : S.me.markaAd) + ' STANDI' + (d ? ' · ' + d.marka.eslesmeler.length : '')]);
       sekmeler.push(['okuttu', (tip === 'ben' ? 'OKUTTUKLARIM' : 'OKUTTUKLARI') + (d ? ' · ' + d.okuttu.length : '')]);
       sekmeler.push(['okutuldu', (tip === 'ben' ? 'BENİ OKUTANLAR' : 'KENDİSİNİ OKUTANLAR') + (d ? ' · ' + d.okutuldu.length : '')]);
     }
     var sekme = v.sekme && sekmeler.some(function (s) { return s[0] === v.sekme; }) ? v.sekme : sekmeler[0][0];
     v._sekme = sekme;
-    var mr = d && sekme === 'marka' ? (tip === 'marka' ? d : d.marka) : null;
+    var mr = d && tip === 'marka' ? d : null;
     var satirlar = !d ? [] : mr ? mr.eslesmeler.map(function (r) { return [r.t, r.ad, [r.firma, r.gorev].filter(Boolean).join(' · '), [r.gsm, r.email].filter(Boolean).join(' · '), 'Okutan: ' + r.personel]; })
       : d[sekme].map(function (r) { return [r.t, r.ad, [r.kat === KAT.T ? '' : r.firma, r.gorev].filter(Boolean).join(' · '), [r.gsm, r.email].filter(Boolean).join(' · '), r.marka ? 'Marka: ' + r.marka : '']; });
     var sutun2 = mr ? 'KİŞİ' : sekme === 'okuttu' ? 'OKUTULAN QR BİLGİLERİ' : 'QR KODU OKUTAN';
@@ -1586,8 +1583,8 @@ button.satir:hover{background:var(--zemin)}
   };
   ACT.raporCsv = function () {
     var d = S.v.veri; if (!d) return;
-    if (S.v._sekme === 'marka') {
-      var mr = S.v.tip === 'marka' ? d : d.marka;
+    if (S.v.tip === 'marka') {
+      var mr = d;
       return indir(dosyaAdi(mr.marka.ad) + '-stant-eslesmeleri.csv', csvYap(['TARİH-SAAT', 'KİŞİ', 'KATEGORİ', 'FİRMA', 'GÖREVİ', 'GSM', 'E-MAIL', 'MARKA PERSONELİ'],
         mr.eslesmeler.map(function (r) { return [tarih(r.t), r.ad, r.kat, r.firma, r.gorev, r.gsm, r.email, r.personel]; })), 'text/csv;charset=utf-8');
     }
